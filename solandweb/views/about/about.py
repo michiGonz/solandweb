@@ -2,120 +2,109 @@ import reflex as rx
 
 def about():
     return rx.box(
-        rx.vstack(
-            rx.center(
-                rx.text(
-                    "Solutions",
-                    class_name="title",
+        rx.text(
+            "About Us",
+            style={
+                "font_size": "2.5rem",
+                "font_weight": "bold",
+                "margin_bottom": "1rem",
+                "color": "#333",
+                "text_align": "center",
+            },
+        ),
+        rx.text(
+            "Learn more about our team and what drives us to deliver the best solutions for you.",
+            style={
+                "font_size": "1rem",
+                "color": "#666",
+                "text_align": "center",
+                "margin_bottom": "2rem",
+                "line_height": "1.5",
+            },
+        ),
+        rx.hstack(
+            rx.box(
+                rx.image(src="/imagen1.jpg", alt="Meet Us", style={"width": "100%", "border_radius": "8px"}),
+                rx.text("Meet Us", style={"font_weight": "bold", "margin_top": "0.5rem"}),
+                rx.text("Get to know our team and what drives us.", style={"color": "#666", "margin_bottom": "1rem"}),
+                rx.button(
+                    "Read more",
                     style={
-                        "font_weight": "bold",  # Negrita
-                        "font_size": "3rem",  # Tamaño más grande
-                        "color": "white",  # Color blanco
-                        "text_align": "center",  # Centrar el texto
-                        "text_transform": "uppercase",  # Texto en mayúsculas
-                        "letter_spacing": "0.1em",  # Espaciado entre letras
-                        "margin": "0.5rem 0",  # Margen superior e inferior
-                        "padding": "0.5rem",  # Relleno interno
+                        "background_color": "#ffcc00",
+                        "color": "black",
+                        "padding": "0.5rem 1rem",
+                        "border": "none",
+                        "border_radius": "5px",
+                        "cursor": "pointer",
+                        "font_weight": "bold",
                     },
                 ),
+                style={
+                    "text_align": "center",
+                    "padding": "1rem",
+                    "border": "1px solid #ddd",
+                    "border_radius": "8px",
+                    "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    "width": "30%",
+                },
             ),
-            rx.vstack(
-                # Primera fila: Una columna a la izquierda y otra a la derecha
-                rx.hstack(
-                    rx.box(
-                        rx.image(src='/imagen1.jpg', alt="Meet Us", width="100%", height="150px", border_radius="8px"),  # Imagen
-                        rx.text("Meet Us", class_name="box-title"),
-                        rx.text("Get to know our team and what drives us.", class_name="box-text"),
-                        rx.center(  # Centrar el botón
-                            rx.button("Read more", class_name="button"),
-                        ),
-                        class_name="about_box",
-                        style={
-                            "margin": "1rem",  # Margen interno pequeño
-                            "width": "35%",  # Ocupa el 45% del ancho
-                            "height": "300px",  # Altura fija para uniformidad
-                            "text_align": "center",  # Centrar el contenido horizontalmente
-                            "background_color": "white",  # Fondo blanco
-                            "padding": "1rem",  # Relleno interno
-                            "border_radius": "8px",  # Bordes redondeados
-                            "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",  # Sombra ligera
-                        },
-                    ),
-                    rx.box(
-                        rx.image(src='/imagen1.jpg', alt="Contact Us", width="100%", height="150px", border_radius="8px"),  # Imagen
-                        rx.text("Contact Us", class_name="box-title"),
-                        rx.text("Get in touch with us for inquiries and collaborations.", class_name="box-text"),
-                        rx.center(  # Centrar el botón
-                            rx.button("Read more", class_name="button"),
-                        ),
-                        class_name="about_box",
-                        style={
-                            "margin": "1rem",  # Margen interno pequeño
-                            "width": "35%",  # Ocupa el 45% del ancho
-                            "height": "300px",  # Altura fija para uniformidad
-                            "text_align": "center",  # Centrar el contenido horizontalmente
-                            "background_color": "white",  # Fondo blanco
-                            "padding": "1rem",  # Relleno interno
-                            "border_radius": "8px",  # Bordes redondeados
-                            "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",  # Sombra ligera
-                        },
-                    ),
-                    justify="between",  # Separar las columnas
-                    spacing="4",  # Espaciado entre las columnas
-                    class_name="about_row",
+            rx.box(
+                rx.image(src="/imagen2.jpg", alt="Our Mission", style={"width": "100%", "border_radius": "8px"}),
+                rx.text("Our Mission", style={"font_weight": "bold", "margin_top": "0.5rem"}),
+                rx.text("Discover our goals and how we aim to achieve them.", style={"color": "#666", "margin_bottom": "1rem"}),
+                rx.button(
+                    "Learn more",
+                    style={
+                        "background_color": "#ffcc00",
+                        "color": "black",
+                        "padding": "0.5rem 1rem",
+                        "border": "none",
+                        "border_radius": "5px",
+                        "cursor": "pointer",
+                        "font_weight": "bold",
+                    },
                 ),
-                  # Primera fila: Una columna a la izquierda y otra a la derecha
-                rx.hstack(
-                    rx.box(
-                        rx.image(src='/imagen1.jpg', alt="Meet Us", width="100%", height="150px", border_radius="8px"),  # Imagen
-                        rx.text("Meet Us", class_name="box-title"),
-                        rx.text("Get to know our team and what drives us.", class_name="box-text"),
-                        rx.center(  # Centrar el botón
-                            rx.button("Read more", class_name="button"),
-                        ),
-                        class_name="about_box",
-                        style={
-                            "margin": "1rem",  # Margen interno pequeño
-                            "width": "35%",  # Ocupa el 45% del ancho
-                            "height": "300px",  # Altura fija para uniformidad
-                            "text_align": "center",  # Centrar el contenido horizontalmente
-                            "background_color": "white",  # Fondo blanco
-                            "padding": "1rem",  # Relleno interno
-                            "border_radius": "8px",  # Bordes redondeados
-                            "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",  # Sombra ligera
-                        },
-                    ),
-                    rx.box(
-                        rx.image(src='/imagen1.jpg', alt="Contact Us", width="100%", height="150px", border_radius="8px"),  # Imagen
-                        rx.text("Contact Us", class_name="box-title"),
-                        rx.text("Get in touch with us for inquiries and collaborations.", class_name="box-text"),
-                        rx.center(  # Centrar el botón
-                            rx.button("Read more", class_name="button"),
-                        ),
-                        class_name="about_box",
-                        style={
-                            "margin": "1rem",  # Margen interno pequeño
-                            "width": "35%",  # Ocupa el 45% del ancho
-                            "height": "300px",  # Altura fija para uniformidad
-                            "text_align": "center",  # Centrar el contenido horizontalmente
-                            "background_color": "white",  # Fondo blanco
-                            "padding": "1rem",  # Relleno interno
-                            "border_radius": "8px",  # Bordes redondeados
-                            "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",  # Sombra ligera
-                        },
-                    ),
-                    justify="between",  # Separar las columnas
-                    spacing="4",  # Espaciado entre las columnas
-                    class_name="about_row",
-                ),
-                
+                style={
+                    "text_align": "center",
+                    "padding": "1rem",
+                    "border": "1px solid #ddd",
+                    "border_radius": "8px",
+                    "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    "width": "30%",
+                },
             ),
-            id="sobre_mi",
-            spacing="0",  # Eliminar el espacio entre el título y los contenedores,
-            style={
-                "background_image": "url('/about.jpg')",  # Imagen de fondo
-                "padding": "2rem",  # Relleno interno del contenedor principal
-                "width": "100%",  # Ocupa todo el ancho
-            },
-        )
+            rx.box(
+                rx.image(src="/imagen2.jpg", alt="Our Mission", style={"width": "100%", "border_radius": "8px"}),
+                rx.text("Our Mission", style={"font_weight": "bold", "margin_top": "0.5rem"}),
+                rx.text("Discover our goals and how we aim to achieve them.", style={"color": "#666", "margin_bottom": "1rem"}),
+                rx.button(
+                    "Learn more",
+                    style={
+                        "background_color": "#ffcc00",
+                        "color": "black",
+                        "padding": "0.5rem 1rem",
+                        "border": "none",
+                        "border_radius": "5px",
+                        "cursor": "pointer",
+                        "font_weight": "bold",
+                    },
+                ),
+                style={
+                    "text_align": "center",
+                    "padding": "1rem",
+                    "border": "1px solid #ddd",
+                    "border_radius": "8px",
+                    "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    "width": "30%",
+                },
+            ),
+            
+        ),
+        style={
+            "padding": "2rem",
+            "background_image": "url('/prueba.png)", 
+            "border_radius": "10px",
+            "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            "width": "100%",
+        },
     )

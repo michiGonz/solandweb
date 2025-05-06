@@ -1,0 +1,322 @@
+import reflex as rx
+from rxconfig import config
+import solandweb.styles.styles as styles
+from solandweb.styles.styles import Size as Size
+
+class State(rx.State):
+    """The app state."""
+    search_query: str = ""  # Estado para almacenar el término de búsqueda
+
+    @rx.var
+    def filtered_results(self) -> str:  # Agregada la anotación de tipo
+        # Aquí puedes implementar la lógica para filtrar resultados según el término de búsqueda
+        return f"Resultados para: {self.search_query}" if self.search_query else "Sin resultados"
+
+    def set_search_query(self, query: str):
+        """Actualiza el término de búsqueda."""
+        self.search_query = query
+
+    def handle_search(self):
+        """Maneja el evento de búsqueda."""
+        print(f"Buscando: {self.search_query}")  # Puedes reemplazar esto con lógica adicional
+
+
+def navbar():
+    """Navbar actualizado para que luzca igual que el de postulation."""
+    return rx.box(
+        rx.hstack(
+            # Información de contacto
+            rx.text("📞 1-800-405-377", style={"margin_right": "1rem", "color": "#555"}),
+            rx.text("✉ info@company.com", style={"margin_right": "1rem", "color": "#555"}),
+            rx.text("📍 Collins Street 8007, USA", style={"margin_right": "1rem", "color": "#555"}),
+            rx.text("📅 Mon - Sat: 8.00 - 19:00", style={"color": "#555"}),
+            justify="between",  # Espaciado entre los elementos
+            width="100%",  # Ocupa todo el ancho del contenedor
+            style={
+                "background_color": "#f8f8f8",  # Fondo gris claro
+                "padding": "0.5rem 1rem",  # Espaciado interno
+                "font_size": "0.9rem",  # Tamaño de fuente más pequeño
+                "border_bottom": "1px solid #ddd",  # Línea divisoria inferior
+            },
+        ),
+        rx.hstack(
+            # Menú principal
+            rx.text("Home", style={"margin_right": "1rem", "cursor": "pointer", "color": "#333", "font_weight": "bold"}),
+            rx.text("Pages", style={"margin_right": "1rem", "cursor": "pointer", "color": "#333", "font_weight": "bold"}),
+            rx.text("Portfolio", style={"margin_right": "1rem", "cursor": "pointer", "color": "#333", "font_weight": "bold"}),
+            rx.text("Blog", style={"margin_right": "1rem", "cursor": "pointer", "color": "#333", "font_weight": "bold"}),
+            rx.text("Elements", style={"cursor": "pointer", "color": "#333", "font_weight": "bold"}),
+            rx.hstack(
+                # Barra de búsqueda
+                rx.input(
+                    placeholder="Buscar...",
+                    on_change=State.set_search_query,  # Actualiza el estado al escribir
+                    style={
+                        "padding": "0.5rem",
+                        "border": "1px solid #ddd",
+                        "border_radius": "5px",
+                        "margin_right": "0.5rem",
+                        "width": "200px",
+                    },
+                ),
+                rx.button(
+                    "🔍",
+                    on_click=State.handle_search,  # Llama a la función de búsqueda
+                    style={
+                        "background_color": "#FFD700",
+                        "color": "black",
+                        "padding": "0.5rem 1rem",
+                        "border": "none",
+                        "border_radius": "5px",
+                        "cursor": "pointer",
+                        "font_weight": "bold",
+                    },
+                ),
+                spacing="1",
+            ),
+            justify="between",  # Espaciado entre los elementos
+            width="100%",  # Ocupa todo el ancho del contenedor
+            style={
+                "background_color": "#f0f0f0",  # Fondo gris claro
+                "padding": "1rem",  # Espaciado interno
+                "border_bottom": "1px solid #ddd",  # Línea divisoria inferior
+            },
+        ),
+        style={
+            "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",  # Sombra para un efecto flotante
+            "z_index": "1000",  # Asegura que el navbar esté encima de otros elementos
+        },
+    )
+
+class SidebarState(rx.State):
+    """Estado para controlar la visibilidad del sidebar."""
+    is_open: bool = True  # El sidebar está abierto por defecto
+
+    def toggle_sidebar(self):
+        """Alterna entre abierto y cerrado."""
+        self.is_open = not self.is_open
+
+
+def sidebar():
+    return rx.box(
+        rx.vstack(
+            # Encabezado con el logo de Soland
+            rx.hstack(
+                rx.image(
+                    src="logo.jpeg",  # Ruta del logo de Soland
+                    alt="Solan Logo",
+                    style={
+                        "width": "150px",  # Tamaño del logo
+                        "height": "auto",
+                        "margin": "0 auto",  # Centrar el logo
+                    },
+                ),
+                style={"padding": "1rem", "align_items": "center"},
+            ),
+            rx.divider(style={"margin": "1rem 0"}),  # Línea divisoria
+
+            # Elementos del menú
+            rx.vstack(
+                rx.hstack(
+                    rx.text("🏠", style={"margin_right": "1rem"}),  # Ícono
+                    rx.cond(SidebarState.is_open, rx.text("Home", style={"font_size": "1rem"})),
+                    style={"padding": "0.8rem 1rem", "cursor": "pointer"},
+                ),
+                rx.hstack(
+                    rx.text("📝", style={"margin_right": "1rem"}),  # Ícono
+                    rx.cond(SidebarState.is_open, rx.text("My Post", style={"font_size": "1rem"})),
+                    style={"padding": "0.8rem 1rem", "cursor": "pointer"},
+                ),
+                rx.hstack(
+                    rx.text("💬", style={"margin_right": "1rem"}),  # Ícono
+                    rx.cond(SidebarState.is_open, rx.text("Chat", style={"font_size": "1rem"})),
+                    style={"padding": "0.8rem 1rem", "cursor": "pointer"},
+                ),
+                rx.hstack(
+                    rx.text("👥", style={"margin_right": "1rem"}),  # Ícono
+                    rx.cond(SidebarState.is_open, rx.text("Invite Friends", style={"font_size": "1rem"})),
+                    style={"padding": "0.8rem 1rem", "cursor": "pointer"},
+                ),
+                rx.hstack(
+                    rx.text("🔔", style={"margin_right": "1rem"}),  # Ícono
+                    rx.cond(SidebarState.is_open, rx.text("Notification", style={"font_size": "1rem"})),
+                    style={"padding": "0.8rem 1rem", "cursor": "pointer"},
+                ),
+                rx.hstack(
+                    rx.text("ℹ️", style={"margin_right": "1rem"}),  # Ícono
+                    rx.cond(SidebarState.is_open, rx.text("About us", style={"font_size": "1rem"})),
+                    style={"padding": "0.8rem 1rem", "cursor": "pointer"},
+                ),
+                rx.hstack(
+                    rx.text("🛠️", style={"margin_right": "1rem"}),  # Ícono
+                    rx.cond(SidebarState.is_open, rx.text("Support", style={"font_size": "1rem"})),
+                    style={"padding": "0.8rem 1rem", "cursor": "pointer"},
+                ),
+                rx.hstack(
+                    rx.text("❓", style={"margin_right": "1rem"}),  # Ícono
+                    rx.cond(SidebarState.is_open, rx.text("FAQ", style={"font_size": "1rem"})),
+                    style={"padding": "0.8rem 1rem", "cursor": "pointer"},
+                ),
+                rx.hstack(
+                    rx.text("🚪", style={"margin_right": "1rem"}),  # Ícono
+                    rx.cond(SidebarState.is_open, rx.text("Logout", style={"font_size": "1rem", "color": "red"})),
+                    style={"padding": "0.8rem 1rem", "cursor": "pointer"},
+                ),
+                style={"margin_top": "1rem"},
+            ),
+
+            # Botón inferior para cerrar el sidebar
+            rx.button(
+                rx.cond(SidebarState.is_open, "Close", "Open"),
+                on_click=SidebarState.toggle_sidebar,  # Alterna el estado del sidebar
+                style={
+                    "background_color": "#FFD700",  # Amarillo
+                    "color": "black",
+                    "padding": "0.8rem 1rem",
+                    "border": "none",
+                    "border_radius": "5px",
+                    "cursor": "pointer",
+                    "font_weight": "bold",
+                    "margin_top": "2rem",
+                },
+            ),
+            style={"align_items": "center"},
+        ),
+        style={
+            "background_color": "#FFF",  # Fondo blanco
+            "width": rx.cond(SidebarState.is_open, "250px", "60px"),  # Ancho dinámico
+            "height": "100vh",  # Altura completa
+            "position": "fixed",  # Fijo en la pantalla
+            "top": "0",
+            "left": "0",
+            "box_shadow": "2px 0 5px rgba(0, 0, 0, 0.1)",  # Sombra para un efecto sofisticado
+            "padding": "1rem",
+            "overflow_y": "auto",  # Scroll si el contenido es largo
+            "transition": "width 0.3s ease",  # Animación suave al abrir/cerrar
+        },
+    )
+
+def hero_section() -> rx.Component:
+    """Hero section."""
+    return rx.box(
+        rx.vstack(
+            rx.center(
+                rx.text(
+                    "Solutions",
+                    class_name="title",
+                    style={
+                        "font_weight": "1000",  # Letra más gruesa
+                        "font_size": "5rem",  # Tamaño grande
+                        "color": "black",  # Color del texto
+                        "text_align": "center",  # Centrar el texto
+                        "letter_spacing": "0.1em",  # Espaciado entre letras
+                        "padding": "0.5rem",  # Relleno interno
+                        "background": "rgba(255, 255, 255, 0.2)",  # Fondo transparente
+                        "border_radius": "5px",  # Bordes redondeados
+                        "display": "inline-block",  # Ajustar el fondo al tamaño del texto
+                    },
+                ),
+            ),
+            rx.text("Tu solución moderna para páginas web profesionales.", size="4"),
+            rx.button("Contáctanos", href="#contacto", color_scheme="teal"),
+            spacing="2",
+            align_items="center",
+        ),
+        style=styles.HERO_STYLE,
+        id="inicio",  # Añadir ID para el enlace de navegación
+    )
+
+def about_section() -> rx.Component:
+    """About section."""
+    return rx.box(
+        rx.text("What we have to offer for your next business and career success", class_name="about-title"),
+        rx.text(
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit.",
+            class_name="about-subtitle",
+        ),
+        rx.grid(
+            # Primera fila
+            rx.box(
+                rx.image(src="/imagen1.jpg", class_name="about-image"),
+                rx.text("Green building", class_name="about-box-title"),
+                rx.text(
+                    "Interdum iusto pulvinar consequuntur augue optio, repellat fuga! Purus expedita fusce temporibus eso.",
+                    class_name="about_box_text",
+                ),
+                rx.button("Take a look", class_name="about-button"),
+                class_name="about-box",
+            ),
+            rx.box(
+                rx.image(src="/imagen1.jpg", class_name="about-image"),
+                rx.text("Interior design", class_name="about-box-title"),
+                rx.text(
+                    "Interdum iusto pulvinar consequuntur augue optio, repellat fuga! Purus expedita fusce temporibus eso.",
+                    class_name="about-box-text",
+                ),
+                rx.button("Take a look", class_name="about-button"),
+                class_name="about-box",
+            ),
+            # Segunda fila
+            rx.box(
+                rx.image(src="/imagen1.jpg", class_name="about-image"),
+                rx.text("Expert team", class_name="about-box-title"),
+                rx.text(
+                    "Interdum iusto pulvinar consequuntur augue optio, repellat fuga! Purus expedita fusce temporibus eso.",
+                    class_name="about-box-text",
+                ),
+                rx.button("Take a look", class_name="about-button"),
+                class_name="about-box",
+            ),
+            rx.box(
+                rx.image(src="/imagen1.jpg", class_name="about-image"),
+                rx.text("Family plans", class_name="about-box-title"),
+                rx.text(
+                    "Interdum iusto pulvinar consequuntur augue optio, repellat fuga! Purus expedita fusce temporibus eso.",
+                    class_name="about-box-text",
+                ),
+                rx.button("Take a look", class_name="about-button"),
+                class_name="about-box",
+            ),
+            template_columns="repeat(2, 1fr)",  # Dos columnas
+            gap="2rem",  # Espaciado entre elementos
+            class_name="about-grid",
+        ),
+        id="about",
+        class_name="about-section",
+    )
+    
+
+def contact_section() -> rx.Component:
+    """Contact section."""
+    return rx.box(
+        rx.vstack(
+            rx.heading("Contáctanos", size="4"),
+            rx.form(
+                rx.input(placeholder="Tu nombre", name="nombre", required=True),
+                rx.input(placeholder="Tu correo", type="email", name="email", required=True),
+                rx.text_area(placeholder="Tu mensaje", name="mensaje", required=True),
+                rx.button("Enviar", type="submit", color_scheme="teal"),
+                spacing="1",
+            ),
+            spacing="2",
+        ),
+        style=styles.CONTACT_STYLE,
+    )
+
+def map_section() -> rx.Component:
+    """Map section."""
+    return rx.box(
+        rx.html(
+            '<iframe src="https://www.google.com/maps/embed?..." width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>'
+        ),
+        style={"margin": "2rem 0"},
+    )
+    
+def footer() -> rx.Component:
+    """Footer section."""
+    return rx.box(
+        rx.text("© 2025 MiWeb. Todos los derechos reservados.", text_align="center"),
+        style=styles.FOOTER_STYLE,  # Aplicar estilos desde styles.py
+    )
+
+
