@@ -19,7 +19,7 @@ def sidebar():
             rx.hstack(
                 rx.image(
                     src="logo.jpeg",  # Ruta del logo de Soland
-                    alt="Solan Logo",
+                    alt="Soland Logo",
                     style={
                         "width": "150px",  # Tamaño del logo
                         "height": "auto",
@@ -98,11 +98,11 @@ def sidebar():
             style={"align_items": "center"},
         ),
         style={
-            "background_color": "#FFF",  # Fondo blanco
+            "background_color": "rgba(255, 255, 255, 0.8)",  # Fondo transparente
             "width": rx.cond(SidebarState.is_open, "250px", "60px"),  # Ancho dinámico
-            "height": "100vh",  # Altura completa
+            "height": "calc(100vh - 60px)",  # Altura ajustada al tamaño del navbar (60px)
             "position": "fixed",  # Fijo en la pantalla
-            "top": "0",
+            "top": "60px",  # Alineado con el final del navbar
             "left": "0",
             "box_shadow": "2px 0 5px rgba(0, 0, 0, 0.1)",  # Sombra para un efecto sofisticado
             "padding": "1rem",

@@ -1,43 +1,49 @@
 import reflex as rx
 import solandweb.styles.styles as styles
-from solandweb.views.navbar.navbar import navbar  # Importa el navbar
 from solandweb.styles.styles import Size as Size
 
+import reflex as rx
+import solandweb.styles.styles as styles
+from solandweb.styles.styles import Size as Size
+from solandweb.views.navbar.navbar import navbar  # Importa el navbar
 
 def hero_section() -> rx.Component:
     """Hero section."""
     return rx.box(
-        navbar(),
-        rx.vstack(
-            rx.center(
-                rx.text(
-                    "Solutions",
-                    class_name="title",
-                    style={
-                        "font_weight": "1000",  # Letra más gruesa
-                        "font_size": "5rem",  # Tamaño grande
-                        "color": "black",  # Color del texto
-                        "text_align": "center",  # Centrar el texto
-                        "letter_spacing": "0.1em",  # Espaciado entre letras
-                        "padding": "0.5rem",  # Relleno interno
-                        "background": "rgba(255, 255, 255, 0.2)",  # Fondo transparente
-                        "border_radius": "5px",  # Bordes redondeados
-                        "display": "inline-block",  # Ajustar el fondo al tamaño del texto
-                    },
+        navbar(),  # Incluye el navbar en la parte superior
+        rx.box(
+            rx.vstack(
+                rx.center(
+                    rx.text(
+                        "Solutions",
+                        class_name="title",
+                        style={
+                            "font_weight": "1000",  # Letra más gruesa
+                            "font_size": "5rem",  # Tamaño grande
+                            "color": "black",  # Color del texto
+                            "text_align": "center",  # Centrar el texto
+                            "letter_spacing": "0.1em",  # Espaciado entre letras
+                            "padding": "0.5rem",  # Relleno interno
+                            "background": "rgba(255, 255, 255, 0.2)",  # Fondo transparente
+                            "border_radius": "5px",  # Bordes redondeados
+                            "display": "inline-block",  # Ajustar el fondo al tamaño del texto
+                        },
+                    ),
                 ),
+                rx.text("Tu solución moderna para páginas web profesionales.", size="4"),
+                rx.button("Contáctanos", href="#contacto", color_scheme="teal"),
+                spacing="2",
+                align_items="center",
             ),
-            rx.text("Tu solución moderna para páginas web profesionales.", size="4"),
-            rx.button("Contáctanos", href="#contacto", color_scheme="teal"),
-            spacing="2",
-            align_items="center",
+            style={
+                **styles.HERO_STYLE,
+                "margin": "0",  # Elimina márgenes externos
+                "padding": "0",  # Elimina relleno interno
+                "width": "100%",  # Asegura que ocupe todo el ancho
+                "margin_top": "60px",  # Ajusta el header para que quede debajo del navbar (asumiendo que el navbar tiene 60px de altura)
+            },
+            id="inicio",  # Añadir ID para el enlace de navegación
         ),
-        style={
-            **styles.HERO_STYLE,
-            "margin": "0",  # Elimina márgenes externos
-            "padding": "0",  # Elimina relleno interno
-            "width": "100%",  # Asegura que ocupe todo el ancho
-        },
-        id="inicio",  # Añadir ID para el enlace de navegación
     )
 
 def about_section() -> rx.Component:

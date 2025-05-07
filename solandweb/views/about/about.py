@@ -22,32 +22,7 @@ def about():
                 "line_height": "1.5",
             },
         ),
-        rx.hstack(
-            rx.box(
-                rx.image(src="/imagen1.jpg", alt="Meet Us", style={"width": "100%", "border_radius": "8px"}),
-                rx.text("Meet Us", style={"font_weight": "bold", "margin_top": "0.5rem"}),
-                rx.text("Get to know our team and what drives us.", style={"color": "#666", "margin_bottom": "1rem"}),
-                rx.button(
-                    "Read more",
-                    style={
-                        "background_color": "#ffcc00",
-                        "color": "black",
-                        "padding": "0.5rem 1rem",
-                        "border": "none",
-                        "border_radius": "5px",
-                        "cursor": "pointer",
-                        "font_weight": "bold",
-                    },
-                ),
-                style={
-                    "text_align": "center",
-                    "padding": "1rem",
-                    "border": "1px solid #ddd",
-                    "border_radius": "8px",
-                    "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                    "width": "30%",
-                },
-            ),
+        rx.hstack(     
             rx.box(
                 rx.image(src="/imagen2.jpg", alt="Our Mission", style={"width": "100%", "border_radius": "8px"}),
                 rx.text("Our Mission", style={"font_weight": "bold", "margin_top": "0.5rem"}),
@@ -98,7 +73,8 @@ def about():
                     "width": "30%",
                 },
             ),
-            
+            justify="center",  # Centra los contenedores horizontalmente
+            spacing="2",
         ),
         style={
             "padding": "2rem",

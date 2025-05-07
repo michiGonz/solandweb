@@ -1,42 +1,46 @@
 import reflex as rx
 import solandweb.styles.styles as styles
-from solandweb.styles.styles import Size as Size
-from solandweb.views.navbar.navbar import navbar
+from solandweb.views.navbar.navbar import navbar  # Importa el navbar
 from solandweb.views.header.header import hero_section
 from solandweb.views.about.about import about
-from solandweb.views.sidebar.sidebar import sidebar
 from solandweb.views.contador.contador import contador
-from solandweb.views.postulation.postulation import job_postings  # Importa la página de postulación
-
+from solandweb.views.postulation.postulation import postulation
+from solandweb.views.sidebar.sidebar import sidebar  # Importa el sidebar
 class State(rx.State):
     pass
 
-
 def index() -> rx.Component:
-    return rx.container(
+    """Página de inicio."""
+    return rx.fragment(
+        navbar(),  # Navbar ocupa todo el ancho
+        hero_section(),  # Sección principal
+        about(),  # Sección "Acerca de"
         sidebar(),
-        hero_section(),
-        about(),
-        contador(),
-        rx.link(
-            "Ver puestos disponibles",
-            href="/postulation",  # Ruta de la página de postulación
-            target="_blank",  # Abrir en una nueva pestaña
+        contador(),  # Contador de estadísticas
+        rx.box(
+            rx.link(
+                "Ver puestos disponibles",
+                href="/postulation",  # Ruta de la página de postulación
+                target="_blank",  # Abrir en una nueva pestaña
+                style={
+                    "display": "block",
+                    "margin": "71px auto",  # Centra el enlace
+                    "text_align": "center",
+                    "font_size": "1.2rem",
+                    "color": "#FFD700",
+                    "text_decoration": "none",
+                    "font_weight": "bold",
+                },
+            ),
             style={
-                "display": "block",
-                "margin": "2rem auto",
+                "width": "100%",  # Asegura que ocupe todo el ancho
                 "text_align": "center",
-                "font_size": "1.2rem",
-                "color": "#FFD700",
-                "text_decoration": "none",
-                "font_weight": "bold",
+                "padding": "1rem",
             },
         ),
-        width="100%",
-        style=styles.GLOBAL_STYLE, 
     )
 
-# Agrega la página de postulación
+# Configuración de la aplicación
 app = rx.App(
     stylesheets=styles.STYLESHEETS,
     style=styles.BASE_STYLE,
@@ -44,12 +48,12 @@ app = rx.App(
 
 app.add_page(
     index,
-    title="Soland | WEB",
-    image="logo.png"
+    title="Soland | Inicio",
+    image="logo.png",
 )
 
 app.add_page(
-    job_postings,  # Página de postulación
+    postulation,  # Página de postulación
     route="/postulation",  # Ruta de la página
     title="Puestos Disponibles | Soland",
     image="logo.png",

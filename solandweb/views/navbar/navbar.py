@@ -42,7 +42,7 @@ def navbar():
             width="100%",
             style={
                 "padding": "1rem 2rem",
-                "background_color": "#FFD700",  # Fondo amarillo
+                "background_color": "rgba(255, 215, 0, 0.8)",  # Fondo amarillo transparente
                 "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",  # Sombra para un efecto sofisticado
                 "position": "fixed",  # Navbar fijo en la parte superior
                 "top": "0",
