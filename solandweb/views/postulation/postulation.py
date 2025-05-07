@@ -29,8 +29,28 @@ class PostulationState(rx.State):
     def set_email(self, value):
         self.email = value
 
-    def set_file_path(self, value):
-        self.file_path = value  # Actualiza la ruta del archivo cargado
+    def set_file_path(self, file):
+        """Establece la ruta del archivo cargado."""
+        self.file_path = file.filename  # Guarda el nombre del archivo
+        self.save_file(file)  # Llama a la función para guardar el archivo
+    def save_file(self, file):
+        """Guarda el archivo cargado en el servidor."""
+        try:
+            # Directorio donde se guardarán los archivos
+            upload_dir = "uploads"
+            os.makedirs(upload_dir, exist_ok=True)  # Crea el directorio si no existe
+
+            # Ruta completa del archivo
+            file_path = os.path.join(upload_dir, file.filename)
+            with open(file_path, "wb") as f:
+                f.write(file.file.read())  # Guarda el contenido del archivo
+
+            self.file_path = file_path  # Actualiza la ruta del archivo cargado
+            print(f"Archivo guardado en: {self.file_path}")
+        except Exception as e:
+            print(f"Error al guardar el archivo: {e}")
+            self.alert_message = f"Error al guardar el archivo: {e}"
+            self.alert_type = "error"
 
     def send_email(self):
         """Envía el correo con el archivo adjunto."""
@@ -43,7 +63,6 @@ class PostulationState(rx.State):
             print(f"Sender Email: {sender_email}")
             print(f"Receiver Email: {receiver_email}")
             print(f"Password Loaded: {'Yes' if password else 'No'}")
-
 
             if not sender_email or not receiver_email or not password:
                 raise ValueError("Faltan variables de configuración en el archivo .env")
@@ -63,29 +82,34 @@ class PostulationState(rx.State):
             msg.attach(MIMEText(body, "plain"))
 
             # Adjuntar el archivo
-            if self.file_path:
+            if self.file_path and os.path.exists(self.file_path):
+                print(f"Adjuntando archivo: {self.file_path}")
                 attachment = MIMEBase("application", "octet-stream")
                 with open(self.file_path, "rb") as file:
                     attachment.set_payload(file.read())
                 encoders.encode_base64(attachment)
                 attachment.add_header(
                     "Content-Disposition",
-                    f"attachment; filename={self.file_path.split('/')[-1]}",
+                    f"attachment; filename={os.path.basename(self.file_path)}",
                 )
                 msg.attach(attachment)
+            else:
+                print("No se encontró el archivo para adjuntar.")
+                raise FileNotFoundError("El archivo no se encontró en el servidor.")
 
             # Enviar el correo
+            print("Conectando al servidor SMTP...")
             with smtplib.SMTP("smtp.gmail.com", 587) as server:
                 server.starttls()
                 server.login(sender_email, password)
                 server.send_message(msg)
 
-            # Mostrar alerta de éxito
+            print("Correo enviado exitosamente.")
             self.alert_message = "¡Correo enviado exitosamente!"
             self.alert_type = "success"
             self.toggle_modal()  # Cierra el modal después de enviar el correo
         except Exception as e:
-            # Mostrar alerta de error
+            print(f"Error al enviar el correo: {e}")
             self.alert_message = f"Error al enviar el correo: {e}"
             self.alert_type = "error"
 
@@ -161,28 +185,33 @@ def postulation():
             ],
             style={"width": "100%", "max_width": "800px", "margin": "0 auto"},
         ),
-        # Mostrar alerta si hay un mensaje
+        # Mostrar alerta flotante si hay un mensaje
         rx.cond(
             PostulationState.alert_message,
             rx.box(
                 rx.text(
                     PostulationState.alert_message,
                     style={
-                        "color": rx.cond(
-                            PostulationState.alert_type == "success",
-                            "green",  # Si es éxito
-                            "red",    # Si es error
-                        ),
+                        "color": "white",
                         "font_weight": "bold",
-                        "margin_top": "1rem",
+                        "text_align": "center",
                     },
                 ),
                 style={
+                    "position": "fixed",
+                    "top": "50%",
+                    "left": "50%",
+                    "transform": "translate(-50%, -50%)",
                     "padding": "1rem",
                     "border": "1px solid #ddd",
-                    "border_radius": "5px",
-                    "background_color": "#f9f9f9",
-                    "margin_top": "1rem",
+                    "border_radius": "10px",
+                    "background_color": rx.cond(
+                        PostulationState.alert_type == "success",
+                        "green",  # Fondo verde para éxito
+                        "red",    # Fondo rojo para error
+                    ),
+                    "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    "z_index": "1000",
                 },
             ),
         ),
