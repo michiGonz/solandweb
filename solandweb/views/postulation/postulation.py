@@ -4,25 +4,49 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+from dotenv import load_dotenv
+import os
+
+# Cargar las variables del archivo .env
+load_dotenv()
 
 class PostulationState(rx.State):
-    """Estado para manejar el formulario de postulación."""
-    is_model_open: bool = False  # Controla si el model está abierto o cerrado
+    is_modal_open: bool = False
     email: str = ""
-    file_path: str = ""
-    selected_job: str = ""  # Estado para el puesto seleccionado
+    selected_job: str = ""
+    file_path: str = ""  # Estado para almacenar la ruta del archivo cargado
+    alert_message: str = ""  # Mensaje de alerta
+    alert_type: str = ""  # Tipo de alerta: "success" o "error"
 
-    def toggle_model(self):
-        """Abre o cierra el model."""
-        self.is_model_open = not self.is_model_open
+    def toggle_modal(self, job_title=""):
+        """Abre o cierra el modal y asigna el título del trabajo."""
+        if isinstance(job_title, str):  # Verifica que job_title sea una cadena
+            self.selected_job = job_title
+        else:
+            self.selected_job = ""  # Asigna un valor por defecto si no es una cadena
+        self.is_modal_open = not self.is_modal_open
+
+    def set_email(self, value):
+        self.email = value
+
+    def set_file_path(self, value):
+        self.file_path = value  # Actualiza la ruta del archivo cargado
 
     def send_email(self):
         """Envía el correo con el archivo adjunto."""
         try:
-            # Configuración del correo
-            sender_email = "tu_correo@empresa.com"
-            receiver_email = "contacto@empresa.com"
-            password = "tu_contraseña"
+            # Cargar las credenciales desde el archivo .env
+            sender_email = os.getenv("SENDER_EMAIL")
+            receiver_email = os.getenv("RECEIVER_EMAIL")
+            password = os.getenv("EMAIL_PASSWORD")
+
+            print(f"Sender Email: {sender_email}")
+            print(f"Receiver Email: {receiver_email}")
+            print(f"Password Loaded: {'Yes' if password else 'No'}")
+
+
+            if not sender_email or not receiver_email or not password:
+                raise ValueError("Faltan variables de configuración en el archivo .env")
 
             # Crear el mensaje
             msg = MIMEMultipart()
@@ -44,7 +68,10 @@ class PostulationState(rx.State):
                 with open(self.file_path, "rb") as file:
                     attachment.set_payload(file.read())
                 encoders.encode_base64(attachment)
-                attachment.add_header("Content-Disposition", f"attachment; filename={self.file_path.split('/')[-1]}")
+                attachment.add_header(
+                    "Content-Disposition",
+                    f"attachment; filename={self.file_path.split('/')[-1]}",
+                )
                 msg.attach(attachment)
 
             # Enviar el correo
@@ -53,10 +80,14 @@ class PostulationState(rx.State):
                 server.login(sender_email, password)
                 server.send_message(msg)
 
-            print("Correo enviado exitosamente.")
-            self.toggle_model()  # Cierra el model después de enviar el correo
+            # Mostrar alerta de éxito
+            self.alert_message = "¡Correo enviado exitosamente!"
+            self.alert_type = "success"
+            self.toggle_modal()  # Cierra el modal después de enviar el correo
         except Exception as e:
-            print(f"Error al enviar el correo: {e}")
+            # Mostrar alerta de error
+            self.alert_message = f"Error al enviar el correo: {e}"
+            self.alert_type = "error"
 
 def postulation():
     """Sección de postulación."""
@@ -93,10 +124,7 @@ def postulation():
                     ),
                     rx.button(
                         "Postularse",
-                        on_click=lambda job=job["title"]: [
-                            PostulationState.set_selected_job(job),
-                            PostulationState.toggle_model(),
-                        ],
+                        on_click=lambda job=job["title"]: PostulationState.toggle_modal(job),
                         style={
                             "background_color": "#FFD700",
                             "color": "black",
@@ -133,70 +161,94 @@ def postulation():
             ],
             style={"width": "100%", "max_width": "800px", "margin": "0 auto"},
         ),
-        rx.model(
-            rx.model_overlay(
-                rx.model_content(
-                    rx.model_header(
-                        f"Postulación para {PostulationState.selected_job}",
-                        style={"font_size": "1.5rem", "font_weight": "bold"},
-                    ),
-                    rx.model_body(
-                        rx.input(
-                            placeholder="Tu correo",
-                            value=PostulationState.email,
-                            on_change=PostulationState.set_email,
-                            style={
-                                "margin_bottom": "1rem",
-                                "padding": "0.5rem",
-                                "border": "1px solid #ddd",
-                                "border_radius": "5px",
-                                "width": "100%",
-                            },
+        # Mostrar alerta si hay un mensaje
+        rx.cond(
+            PostulationState.alert_message,
+            rx.box(
+                rx.text(
+                    PostulationState.alert_message,
+                    style={
+                        "color": rx.cond(
+                            PostulationState.alert_type == "success",
+                            "green",  # Si es éxito
+                            "red",    # Si es error
                         ),
-                        rx.input(
-                            type="file",
-                            on_change=PostulationState.set_file_path,
-                            style={
-                                "margin_bottom": "1rem",
-                                "padding": "0.5rem",
-                                "border": "1px solid #ddd",
-                                "border_radius": "5px",
-                                "width": "100%",
-                            },
-                        ),
-                    ),
-                    rx.model_footer(
-                        rx.button(
-                            "Enviar",
-                            on_click=PostulationState.send_email,
-                            style={
-                                "background_color": "#FFD700",
-                                "color": "black",
-                                "padding": "0.5rem 1rem",
-                                "border": "none",
-                                "border_radius": "5px",
-                                "cursor": "pointer",
-                                "font_weight": "bold",
-                                "margin_right": "1rem",
-                            },
-                        ),
+                        "font_weight": "bold",
+                        "margin_top": "1rem",
+                    },
+                ),
+                style={
+                    "padding": "1rem",
+                    "border": "1px solid #ddd",
+                    "border_radius": "5px",
+                    "background_color": "#f9f9f9",
+                    "margin_top": "1rem",
+                },
+            ),
+        ),
+        # MODAL USANDO rx.dialog
+        rx.dialog.root(
+            rx.dialog.trigger(
+                rx.box(),  # Placeholder, no visible
+            ),
+            rx.dialog.content(
+                rx.dialog.title(
+                    f"Postulación para {PostulationState.selected_job}",
+                ),
+                rx.dialog.description(
+                    "Ingresa tu correo y sube tu CV para postularte.",
+                ),
+                rx.input(
+                    placeholder="Tu correo",
+                    value=PostulationState.email,
+                    on_change=PostulationState.set_email,
+                    style={
+                        "margin_bottom": "1rem",
+                        "padding": "0.5rem",
+                        "border": "1px solid #ddd",
+                        "border_radius": "5px",
+                        "width": "100%",
+                    },
+                ),
+                rx.input(
+                    type="file",
+                    on_change=PostulationState.set_file_path,
+                    style={
+                        "margin_bottom": "1rem",
+                        "padding": "0.5rem",
+                        "border": "1px solid #ddd",
+                        "border_radius": "5px",
+                        "width": "100%",
+                    },
+                ),
+                rx.flex(
+                    rx.dialog.close(
                         rx.button(
                             "Cancelar",
-                            on_click=PostulationState.toggle_model,
-                            style={
-                                "background_color": "#ddd",
-                                "color": "black",
-                                "padding": "0.5rem 1rem",
-                                "border": "none",
-                                "border_radius": "5px",
-                                "cursor": "pointer",
-                                "font_weight": "bold",
-                            },
+                            variant="soft",
+                            color_scheme="gray",
                         ),
                     ),
+                    rx.button(
+                        "Enviar",
+                        on_click=PostulationState.send_email,
+                        style={
+                            "background_color": "#FFD700",
+                            "color": "black",
+                            "padding": "0.5rem 1rem",
+                            "border": "none",
+                            "border_radius": "5px",
+                            "cursor": "pointer",
+                            "font_weight": "bold",
+                        },
+                    ),
+                    spacing="3",
+                    justify="end",
                 ),
+                max_width="450px",
             ),
-            is_open=PostulationState.is_model_open,
+            open=PostulationState.is_modal_open,
+            on_open_change=PostulationState.toggle_modal,
         ),
         style={
             "padding": "2rem",
