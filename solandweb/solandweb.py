@@ -5,7 +5,8 @@ from solandweb.views.header.header import hero_section
 from solandweb.views.about.about import about
 from solandweb.views.contador.contador import contador
 from solandweb.views.postulation.postulation import postulation
-from solandweb.views.sidebar.sidebar import sidebar  # Importa el sidebar
+from solandweb.views.jobs_carrusel.job_carrusel import job_carrusel, CarruselState  # Importa el carrusel y su estado
+
 class State(rx.State):
     pass
 
@@ -15,7 +16,8 @@ def index() -> rx.Component:
         navbar(),  # Navbar ocupa todo el ancho
         hero_section(),  # Sección principal
         about(),  # Sección "Acerca de"
-        sidebar(),
+        #sidebar(),
+        job_carrusel(),  # Carrusel de vacantes disponibles
         contador(),  # Contador de estadísticas
         rx.box(
             rx.link(
@@ -46,10 +48,13 @@ app = rx.App(
     style=styles.BASE_STYLE,
 )
 
+
 app.add_page(
     index,
     title="Soland | Inicio",
     image="logo.png",
+    on_load=CarruselState.on_load, 
+
 )
 
 app.add_page(
@@ -58,3 +63,4 @@ app.add_page(
     title="Puestos Disponibles | Soland",
     image="logo.png",
 )
+

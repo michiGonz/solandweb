@@ -7,7 +7,7 @@ def navbar():
         rx.hstack(
             # Logo de la empresa
             rx.image(
-                src="logo.jpeg",  # Ruta del logo
+                src="logo.png",  # Ruta del logo
                 alt="Logo",
                 style={
                     "width": "120px",

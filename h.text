@@ -103,7 +103,7 @@ def sidebar():
             # Encabezado con el logo de Soland
             rx.hstack(
                 rx.image(
-                    src="logo.jpeg",  # Ruta del logo de Soland
+                    src="logo.png",  # Ruta del logo de Soland
                     alt="Solan Logo",
                     style={
                         "width": "150px",  # Tamaño del logo

@@ -4,6 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+import typing
 from dotenv import load_dotenv
 import os
 
@@ -20,38 +21,81 @@ class PostulationState(rx.State):
 
     def toggle_modal(self, job_title=""):
         """Abre o cierra el modal y asigna el título del trabajo."""
-        if isinstance(job_title, str):  # Verifica que job_title sea una cadena
-            self.selected_job = job_title
-        else:
-            self.selected_job = ""  # Asigna un valor por defecto si no es una cadena
+        self.selected_job = job_title if isinstance(job_title, str) else ""
         self.is_modal_open = not self.is_modal_open
 
     def set_email(self, value):
+        """Establece el correo del postulante."""
         self.email = value
 
-    def set_file_path(self, file):
-        """Establece la ruta del archivo cargado."""
-        self.file_path = file.filename  # Guarda el nombre del archivo
-        self.save_file(file)  # Llama a la función para guardar el archivo
-    def save_file(self, file):
-        """Guarda el archivo cargado en el servidor."""
-        try:
-            # Directorio donde se guardarán los archivos
-            upload_dir = "uploads"
-            os.makedirs(upload_dir, exist_ok=True)  # Crea el directorio si no existe
+def set_file_path(self, file):
+    """Establece la ruta del archivo cargado."""
+    try:
+        # Verifica que el archivo sea válido
+        if not hasattr(file, "filename") or not hasattr(file, "file"):
+            raise ValueError("El archivo cargado no es válido.")
 
-            # Ruta completa del archivo
-            file_path = os.path.join(upload_dir, file.filename)
-            with open(file_path, "wb") as f:
-                f.write(file.file.read())  # Guarda el contenido del archivo
+        # Directorio donde se guardarán los archivos
+        upload_dir = "uploads"
+        os.makedirs(upload_dir, exist_ok=True)  # Crea el directorio si no existe
 
-            self.file_path = file_path  # Actualiza la ruta del archivo cargado
-            print(f"Archivo guardado en: {self.file_path}")
-        except Exception as e:
-            print(f"Error al guardar el archivo: {e}")
-            self.alert_message = f"Error al guardar el archivo: {e}"
-            self.alert_type = "error"
+        # Ruta completa del archivo
+        file_path = os.path.join(upload_dir, file.filename)
+        with open(file_path, "wb") as f:
+            f.write(file.file.read())  # Guarda el contenido del archivo
 
+        self.file_path = file_path  # Actualiza la ruta del archivo cargado
+        print(f"Archivo guardado en: {self.file_path}")
+    except Exception as e:
+        print(f"Error al guardar el archivo: {e}")
+        self.alert_message = f"Error al guardar el archivo: {e}"
+        self.alert_type = "error"
+        
+    """Establece la ruta del archivo cargado."""
+    try:
+        # Extrae el archivo del diccionario
+        file = value.get("file")
+        if not file or not hasattr(file, "filename") or not hasattr(file, "file"):
+            raise ValueError("El archivo cargado no es válido.")
+
+        # Directorio donde se guardarán los archivos
+        upload_dir = "uploads"
+        os.makedirs(upload_dir, exist_ok=True)  # Crea el directorio si no existe
+
+        # Ruta completa del archivo
+        file_path = os.path.join(upload_dir, file.filename)
+        with open(file_path, "wb") as f:
+            f.write(file.file.read())  # Guarda el contenido del archivo
+
+        self.file_path = file_path  # Actualiza la ruta del archivo cargado
+        print(f"Archivo guardado en: {self.file_path}")
+    except Exception as e:
+        print(f"Error al guardar el archivo: {e}")
+        self.alert_message = f"Error al guardar el archivo: {e}"
+        self.alert_type = "error"
+
+    """Establece la ruta del archivo cargado."""
+    try:
+        # Verifica que el archivo sea válido
+        if not hasattr(file, "filename") or not hasattr(file, "file"):
+            raise ValueError("El archivo cargado no es válido.")
+
+        # Directorio donde se guardarán los archivos
+        upload_dir = "uploads"
+        os.makedirs(upload_dir, exist_ok=True)  # Crea el directorio si no existe
+
+        # Ruta completa del archivo
+        file_path = os.path.join(upload_dir, file.filename)
+        with open(file_path, "wb") as f:
+            f.write(file.file.read())  # Guarda el contenido del archivo
+
+        self.file_path = file_path  # Actualiza la ruta del archivo cargado
+        print(f"Archivo guardado en: {self.file_path}")
+    except Exception as e:
+        print(f"Error al guardar el archivo: {e}")
+        self.alert_message = f"Error al guardar el archivo: {e}"
+        self.alert_type = "error"
+        
     def send_email(self):
         """Envía el correo con el archivo adjunto."""
         try:
@@ -112,6 +156,101 @@ class PostulationState(rx.State):
             print(f"Error al enviar el correo: {e}")
             self.alert_message = f"Error al enviar el correo: {e}"
             self.alert_type = "error"
+
+def postulation_modal():
+    """Componente del modal para la postulación."""
+    return rx.cond(
+        PostulationState.is_modal_open,
+        rx.box(
+            rx.text(
+                f"Postulación para {PostulationState.selected_job}",
+                style={
+                    "font_size": "1.5rem",
+                    "font_weight": "bold",
+                    "margin_bottom": "1rem",
+                    "text_align": "center",
+                },
+            ),
+            rx.input(
+                placeholder="Ingresa tu correo",
+                on_change=PostulationState.set_email,
+                style={
+                    "width": "100%",
+                    "padding": "0.5rem",
+                    "margin_bottom": "1rem",
+                    "border": "1px solid #ddd",
+                    "border_radius": "5px",
+                },
+            ),
+            rx.form(
+                rx.input(
+                    type="file",
+                    name="file",
+                    style={
+                        "margin_bottom": "1rem",
+                    },
+                ),
+                rx.button(
+                    "Subir archivo",
+                    type="submit",
+                    style={
+                        "background_color": "#4CAF50",
+                        "color": "white",
+                        "padding": "0.5rem 1rem",
+                        "border": "none",
+                        "border_radius": "5px",
+                        "cursor": "pointer",
+                        "font_weight": "bold",
+                    },
+                ),
+                on_submit=PostulationState.set_file_path,
+                style={
+                    "margin_bottom": "1rem",
+                },
+            ),
+            rx.hstack(
+                rx.button(
+                    "Enviar",
+                    on_click=PostulationState.send_email,
+                    style={
+                        "background_color": "#4CAF50",
+                        "color": "white",
+                        "padding": "0.5rem 1rem",
+                        "border": "none",
+                        "border_radius": "5px",
+                        "cursor": "pointer",
+                        "font_weight": "bold",
+                    },
+                ),
+                rx.button(
+                    "Cancelar",
+                    on_click=PostulationState.toggle_modal,
+                    style={
+                        "background_color": "#f44336",
+                        "color": "white",
+                        "padding": "0.5rem 1rem",
+                        "border": "none",
+                        "border_radius": "5px",
+                        "cursor": "pointer",
+                        "font_weight": "bold",
+                    },
+                ),
+                justify="between",
+            ),
+            style={
+                "position": "fixed",
+                "top": "50%",
+                "left": "50%",
+                "transform": "translate(-50%, -50%)",
+                "background_color": "white",
+                "padding": "2rem",
+                "border_radius": "10px",
+                "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                "z_index": "1000",
+                "width": "400px",
+            },
+        ),
+    )
 
 def postulation():
     """Sección de postulación."""
@@ -185,100 +324,7 @@ def postulation():
             ],
             style={"width": "100%", "max_width": "800px", "margin": "0 auto"},
         ),
-        # Mostrar alerta flotante si hay un mensaje
-        rx.cond(
-            PostulationState.alert_message,
-            rx.box(
-                rx.text(
-                    PostulationState.alert_message,
-                    style={
-                        "color": "white",
-                        "font_weight": "bold",
-                        "text_align": "center",
-                    },
-                ),
-                style={
-                    "position": "fixed",
-                    "top": "50%",
-                    "left": "50%",
-                    "transform": "translate(-50%, -50%)",
-                    "padding": "1rem",
-                    "border": "1px solid #ddd",
-                    "border_radius": "10px",
-                    "background_color": rx.cond(
-                        PostulationState.alert_type == "success",
-                        "green",  # Fondo verde para éxito
-                        "red",    # Fondo rojo para error
-                    ),
-                    "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                    "z_index": "1000",
-                },
-            ),
-        ),
-        # MODAL USANDO rx.dialog
-        rx.dialog.root(
-            rx.dialog.trigger(
-                rx.box(),  # Placeholder, no visible
-            ),
-            rx.dialog.content(
-                rx.dialog.title(
-                    f"Postulación para {PostulationState.selected_job}",
-                ),
-                rx.dialog.description(
-                    "Ingresa tu correo y sube tu CV para postularte.",
-                ),
-                rx.input(
-                    placeholder="Tu correo",
-                    value=PostulationState.email,
-                    on_change=PostulationState.set_email,
-                    style={
-                        "margin_bottom": "1rem",
-                        "padding": "0.5rem",
-                        "border": "1px solid #ddd",
-                        "border_radius": "5px",
-                        "width": "100%",
-                    },
-                ),
-                rx.input(
-                    type="file",
-                    on_change=PostulationState.set_file_path,
-                    style={
-                        "margin_bottom": "1rem",
-                        "padding": "0.5rem",
-                        "border": "1px solid #ddd",
-                        "border_radius": "5px",
-                        "width": "100%",
-                    },
-                ),
-                rx.flex(
-                    rx.dialog.close(
-                        rx.button(
-                            "Cancelar",
-                            variant="soft",
-                            color_scheme="gray",
-                        ),
-                    ),
-                    rx.button(
-                        "Enviar",
-                        on_click=PostulationState.send_email,
-                        style={
-                            "background_color": "#FFD700",
-                            "color": "black",
-                            "padding": "0.5rem 1rem",
-                            "border": "none",
-                            "border_radius": "5px",
-                            "cursor": "pointer",
-                            "font_weight": "bold",
-                        },
-                    ),
-                    spacing="3",
-                    justify="end",
-                ),
-                max_width="450px",
-            ),
-            open=PostulationState.is_modal_open,
-            on_open_change=PostulationState.toggle_modal,
-        ),
+        postulation_modal(),  # Agrega el modal aquí
         style={
             "padding": "2rem",
             "background_color": "#f9f9f9",
