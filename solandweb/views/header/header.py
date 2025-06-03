@@ -15,7 +15,7 @@ def hero_section() -> rx.Component:
             rx.vstack(
                 rx.center(
                     rx.text(
-                        "Solutions",
+                        "Servicios y Suministros Soland C.A",
                         class_name="title",
                         style={
                             "font_weight": "1000",  # Letra más gruesa
@@ -30,7 +30,7 @@ def hero_section() -> rx.Component:
                         },
                     ),
                 ),
-                rx.text("Tu solución moderna para páginas web profesionales.", size="4"),
+                rx.text("Somos una empresa venezolana con mas de 21 años de experiencia en el area de ingeniería.", size="4"),
                 rx.button("Contáctanos", href="#contacto", color_scheme="teal"),
                 spacing="2",
                 align_items="center",

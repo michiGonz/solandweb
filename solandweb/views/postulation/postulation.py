@@ -4,9 +4,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-import typing
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
 # Cargar las variables del archivo .env
 load_dotenv()
@@ -28,74 +27,31 @@ class PostulationState(rx.State):
         """Establece el correo del postulante."""
         self.email = value
 
-def set_file_path(self, file):
-    """Establece la ruta del archivo cargado."""
-    try:
-        # Verifica que el archivo sea válido
-        if not hasattr(file, "filename") or not hasattr(file, "file"):
-            raise ValueError("El archivo cargado no es válido.")
+    def set_file_path(self, value):
+        """Establece la ruta del archivo cargado."""
+        try:
+            # Verifica que el valor sea un diccionario con la clave 'file'
+            if not isinstance(value, dict) or "file" not in value:
+                raise ValueError("El archivo cargado no es válido.")
 
-        # Directorio donde se guardarán los archivos
-        upload_dir = "uploads"
-        os.makedirs(upload_dir, exist_ok=True)  # Crea el directorio si no existe
+            file = value["file"]
 
-        # Ruta completa del archivo
-        file_path = os.path.join(upload_dir, file.filename)
-        with open(file_path, "wb") as f:
-            f.write(file.file.read())  # Guarda el contenido del archivo
+            # Directorio donde se guardarán los archivos
+            upload_dir = "uploads"
+            os.makedirs(upload_dir, exist_ok=True)  # Crea el directorio si no existe
 
-        self.file_path = file_path  # Actualiza la ruta del archivo cargado
-        print(f"Archivo guardado en: {self.file_path}")
-    except Exception as e:
-        print(f"Error al guardar el archivo: {e}")
-        self.alert_message = f"Error al guardar el archivo: {e}"
-        self.alert_type = "error"
-        
-    """Establece la ruta del archivo cargado."""
-    try:
-        # Extrae el archivo del diccionario
-        file = value.get("file")
-        if not file or not hasattr(file, "filename") or not hasattr(file, "file"):
-            raise ValueError("El archivo cargado no es válido.")
+            # Ruta completa del archivo
+            file_path = os.path.join(upload_dir, file.filename)
+            with open(file_path, "wb") as f:
+                f.write(file.file.read())  # Guarda el contenido del archivo
 
-        # Directorio donde se guardarán los archivos
-        upload_dir = "uploads"
-        os.makedirs(upload_dir, exist_ok=True)  # Crea el directorio si no existe
+            self.file_path = file_path  # Actualiza la ruta del archivo cargado
+            print(f"Archivo guardado en: {self.file_path}")
+        except Exception as e:
+            print(f"Error al guardar el archivo: {e}")
+            self.alert_message = f"Error al guardar el archivo: {e}"
+            self.alert_type = "error"
 
-        # Ruta completa del archivo
-        file_path = os.path.join(upload_dir, file.filename)
-        with open(file_path, "wb") as f:
-            f.write(file.file.read())  # Guarda el contenido del archivo
-
-        self.file_path = file_path  # Actualiza la ruta del archivo cargado
-        print(f"Archivo guardado en: {self.file_path}")
-    except Exception as e:
-        print(f"Error al guardar el archivo: {e}")
-        self.alert_message = f"Error al guardar el archivo: {e}"
-        self.alert_type = "error"
-
-    """Establece la ruta del archivo cargado."""
-    try:
-        # Verifica que el archivo sea válido
-        if not hasattr(file, "filename") or not hasattr(file, "file"):
-            raise ValueError("El archivo cargado no es válido.")
-
-        # Directorio donde se guardarán los archivos
-        upload_dir = "uploads"
-        os.makedirs(upload_dir, exist_ok=True)  # Crea el directorio si no existe
-
-        # Ruta completa del archivo
-        file_path = os.path.join(upload_dir, file.filename)
-        with open(file_path, "wb") as f:
-            f.write(file.file.read())  # Guarda el contenido del archivo
-
-        self.file_path = file_path  # Actualiza la ruta del archivo cargado
-        print(f"Archivo guardado en: {self.file_path}")
-    except Exception as e:
-        print(f"Error al guardar el archivo: {e}")
-        self.alert_message = f"Error al guardar el archivo: {e}"
-        self.alert_type = "error"
-        
     def send_email(self):
         """Envía el correo con el archivo adjunto."""
         try:
@@ -103,10 +59,6 @@ def set_file_path(self, file):
             sender_email = os.getenv("SENDER_EMAIL")
             receiver_email = os.getenv("RECEIVER_EMAIL")
             password = os.getenv("EMAIL_PASSWORD")
-
-            print(f"Sender Email: {sender_email}")
-            print(f"Receiver Email: {receiver_email}")
-            print(f"Password Loaded: {'Yes' if password else 'No'}")
 
             if not sender_email or not receiver_email or not password:
                 raise ValueError("Faltan variables de configuración en el archivo .env")
@@ -127,7 +79,6 @@ def set_file_path(self, file):
 
             # Adjuntar el archivo
             if self.file_path and os.path.exists(self.file_path):
-                print(f"Adjuntando archivo: {self.file_path}")
                 attachment = MIMEBase("application", "octet-stream")
                 with open(self.file_path, "rb") as file:
                     attachment.set_payload(file.read())
@@ -138,17 +89,14 @@ def set_file_path(self, file):
                 )
                 msg.attach(attachment)
             else:
-                print("No se encontró el archivo para adjuntar.")
                 raise FileNotFoundError("El archivo no se encontró en el servidor.")
 
             # Enviar el correo
-            print("Conectando al servidor SMTP...")
             with smtplib.SMTP("smtp.gmail.com", 587) as server:
                 server.starttls()
                 server.login(sender_email, password)
                 server.send_message(msg)
 
-            print("Correo enviado exitosamente.")
             self.alert_message = "¡Correo enviado exitosamente!"
             self.alert_type = "success"
             self.toggle_modal()  # Cierra el modal después de enviar el correo

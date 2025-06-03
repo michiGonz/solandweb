@@ -3,7 +3,7 @@ import reflex as rx
 def about():
     return rx.box(
         rx.text(
-            "About Us",
+            "Sobre nosotros",
             style={
                 "font_size": "2.5rem",
                 "font_weight": "bold",
@@ -26,7 +26,10 @@ def about():
             rx.box(
                 rx.image(src="/imagen2.jpg", alt="Our Mission", style={"width": "100%", "border_radius": "8px"}),
                 rx.text("Our Mission", style={"font_weight": "bold", "margin_top": "0.5rem"}),
-                rx.text("Discover our goals and how we aim to achieve them.", style={"color": "#666", "margin_bottom": "1rem"}),
+                rx.text(
+                    "Discover our goals and how we aim to achieve them.",
+                    style={"color": "#666", "margin_bottom": "1rem"},
+                ),
                 rx.button(
                     "Learn more",
                     style={
@@ -49,9 +52,21 @@ def about():
                 },
             ),
             rx.box(
-                rx.image(src="/imagen2.jpg", alt="Our Mission", style={"width": "100%", "border_radius": "8px"}),
-                rx.text("Our Mission", style={"font_weight": "bold", "margin_top": "0.5rem"}),
-                rx.text("Discover our goals and how we aim to achieve them.", style={"color": "#666", "margin_bottom": "1rem"}),
+                rx.image(src="/imagen2.jpg", alt="Nuestra Misión", style={"width": "100%", "border_radius": "8px"}),
+                rx.text("Misión", style={"font_weight": "bold", "margin_top": "0.5rem"}),
+                rx.text(
+                    """Satisfacer las necesidades de nuestros clientes, compañías, concesionarios, distribuidores,
+accionistas, trabajadores y suplidores, a través de nuestros productos y de la gestión de nuestros
+negocios, garantizando los más altos estándares de calidad, seguridad, Excelente calidad de vida,
+protección ambiental, eficiencia y competitividad, con la mejor relación precio/valor, alta rentabilidad
+y crecimiento sostenido, contribuyendo con el mejoramiento de la calidad de vida de la comunidad, tecnología de vanguardia,
+gente comprometida y valores institucionales, aportando responsablemente al desarrollo de nuestro país.""",
+                    style={
+                        "color": "#666",
+                        "margin_bottom": "1rem",
+                        "text_align": "justify",
+                    },
+                ),
                 rx.button(
                     "Learn more",
                     style={
@@ -78,7 +93,7 @@ def about():
         ),
         style={
             "padding": "2rem",
-            "background_image": "url('/prueba.png)", 
+            "background_image": "url('/prueba.png')", 
             "border_radius": "10px",
             "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
             "width": "100%",
