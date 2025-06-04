@@ -21,7 +21,11 @@ def navbar():
                 rx.text("Servicios", style={"cursor": "pointer", "font_weight": "bold", "color": "black", "margin_right": "1.5rem"}),
                 rx.text("Portafolio", style={"cursor": "pointer", "font_weight": "bold", "color": "black", "margin_right": "1.5rem"}),
                 rx.text("Blog", style={"cursor": "pointer", "font_weight": "bold", "color": "black", "margin_right": "1.5rem"}),
-                rx.text("Contacto", style={"cursor": "pointer", "font_weight": "bold", "color": "black"}),
+                rx.link(
+                    "Puestos disponibles",
+                    href="/postulation",
+                    style={"cursor": "pointer", "font_weight": "bold", "color": "black", "margin_left": "1.5rem"},
+                ),
                 spacing="1",
             ),
             # Botón de acción
