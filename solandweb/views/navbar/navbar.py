@@ -7,7 +7,7 @@ def navbar():
         rx.hstack(
             # Logo de la empresa
             rx.image(
-                src="logo.png",  # Ruta del logo
+                src="/logo.png",  # Ruta del logo
                 alt="Logo",
                 style={
                     "width": "120px",
@@ -17,7 +17,11 @@ def navbar():
             ),
             # Menú principal
             rx.hstack(
-                rx.text("Inicio", style={"cursor": "pointer", "font_weight": "bold", "color": "black", "margin_right": "1.5rem"}),
+                    rx.link(
+            "Inicio",
+            href="/",
+            style={"cursor": "pointer", "font_weight": "bold", "color": "black", "margin_right": "1.5rem"},
+),
                 rx.text("Servicios", style={"cursor": "pointer", "font_weight": "bold", "color": "black", "margin_right": "1.5rem"}),
                 rx.text("Portafolio", style={"cursor": "pointer", "font_weight": "bold", "color": "black", "margin_right": "1.5rem"}),
                 rx.text("Blog", style={"cursor": "pointer", "font_weight": "bold", "color": "black", "margin_right": "1.5rem"}),

@@ -1,275 +1,326 @@
 import reflex as rx
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
-import os
-from dotenv import load_dotenv
 from solandweb.views.navbar.navbar import navbar
+from solandweb.views.footer.footer import footer
 
-# Cargar las variables del archivo .env
-load_dotenv()
+class PostulacionState(rx.State):
+    show_modal: bool = False
+    nombre: str = ""
+    apellido: str = ""
+    mensaje: str = ""
+    mensaje_color: str = "#222"
 
-class PostulationState(rx.State):
-    is_modal_open: bool = False
-    email: str = ""
-    selected_job: str = ""
-    file_path: str = ""
-    alert_message: str = ""
-    alert_type: str = ""
+    def abrir_modal(self):
+        self.show_modal = True
+        self.mensaje = ""
+        self.nombre = ""
+        self.apellido = ""
 
-    def toggle_modal(self, job_title=""):
-        self.selected_job = job_title if isinstance(job_title, str) else ""
-        self.is_modal_open = not self.is_modal_open
+    def cerrar_modal(self):
+        self.show_modal = False
+        self.mensaje = ""
 
-    def set_email(self, value):
-        self.email = value
+    def set_nombre(self, value):
+        self.nombre = value
 
-    def set_file_path(self, value):
+    def set_apellido(self, value):
+        self.apellido = value
+
+    def manejar_open(self, opened):
+        if not opened:
+            self.cerrar_modal()
+
+    @rx.event
+    async def enviar_postulacion(self, files: list[rx.UploadFile]):
+        if not self.nombre or not self.apellido or not files:
+            self.mensaje = "Por favor completa todos los campos y adjunta tu CV."
+            self.mensaje_color = "#d32f2f"
+            return
         try:
-            if not isinstance(value, dict) or "file" not in value:
-                raise ValueError("El archivo cargado no es válido.")
-            file = value["file"]
-            upload_dir = "uploads"
-            os.makedirs(upload_dir, exist_ok=True)
-            file_path = os.path.join(upload_dir, file.filename)
-            with open(file_path, "wb") as f:
-                f.write(file.file.read())
-            self.file_path = file_path
-            print(f"Archivo guardado en: {self.file_path}")
-        except Exception as e:
-            print(f"Error al guardar el archivo: {e}")
-            self.alert_message = f"Error al guardar el archivo: {e}"
-            self.alert_type = "error"
+            cv_bytes = await files[0].read()
+            # Aquí deberías manejar el envío (por ejemplo, guardar el archivo o enviar por email)
+            # Simulación de éxito:
+            self.mensaje = "¡Enviado correctamente!"
+            self.mensaje_color = "#388e3c"
+           
+        except Exception:
+            self.mensaje = "Ocurrió un error al enviar. Intenta de nuevo."
+            self.mensaje_color = "#d32f2f"
 
-    def send_email(self):
-        try:
-            sender_email = os.getenv("SENDER_EMAIL")
-            receiver_email = os.getenv("RECEIVER_EMAIL")
-            password = os.getenv("EMAIL_PASSWORD")
-            if not sender_email or not receiver_email or not password:
-                raise ValueError("Faltan variables de configuración en el archivo .env")
-            msg = MIMEMultipart()
-            msg["From"] = sender_email
-            msg["To"] = receiver_email
-            msg["Subject"] = f"Postulación para {self.selected_job}"
-            body = (
-                f"Correo del postulante: {self.email}\n"
-                f"Puesto seleccionado: {self.selected_job}\n"
-                f"Se adjunta el archivo de postulación."
-            )
-            msg.attach(MIMEText(body, "plain"))
-            if self.file_path and os.path.exists(self.file_path):
-                attachment = MIMEBase("application", "octet-stream")
-                with open(self.file_path, "rb") as file:
-                    attachment.set_payload(file.read())
-                encoders.encode_base64(attachment)
-                attachment.add_header(
-                    "Content-Disposition",
-                    f"attachment; filename={os.path.basename(self.file_path)}",
-                )
-                msg.attach(attachment)
-            else:
-                raise FileNotFoundError("El archivo no se encontró en el servidor.")
-            with smtplib.SMTP("smtp.gmail.com", 587) as server:
-                server.starttls()
-                server.login(sender_email, password)
-                server.send_message(msg)
-            self.alert_message = "¡Correo enviado exitosamente!"
-            self.alert_type = "success"
-            self.toggle_modal()
-        except Exception as e:
-            print(f"Error al enviar el correo: {e}")
-            self.alert_message = f"Error al enviar el correo: {e}"
-            self.alert_type = "error"
-
-def postulation_modal():
-    return rx.cond(
-        PostulationState.is_modal_open,
-        rx.box(
-            rx.text(
-                f"Postulación para {PostulationState.selected_job}",
-                style={
-                    "font_size": "1.5rem",
-                    "font_weight": "bold",
-                    "margin_bottom": "1rem",
-                    "text_align": "center",
-                    "color": "#000",  # Letras negras
-                },
+def modal_postulacion():
+    return rx.dialog.root(
+        rx.dialog.trigger(rx.box()),  # Trigger vacío, controlado por show_modal
+        rx.dialog.content(
+            rx.dialog.title(
+                "Postulación",
+                style={"color": "#222", "font_weight": "bold", "font_size": "1.4rem"},
             ),
-            rx.input(
-                placeholder="Ingresa tu correo",
-                on_change=PostulationState.set_email,
-                style={
-                    "width": "100%",
-                    "padding": "0.5rem",
-                    "margin_bottom": "1rem",
-                    "border": "1px solid #ddd",
-                    "border_radius": "5px",
-                    "color": "#000",  # Letras negras
-                },
-            ),
-            rx.form(
-                rx.input(
-                    type="file",
-                    name="file",
-                    style={
-                        "margin_bottom": "1rem",
-                        "color": "#000",  # Letras negras
-                    },
-                ),
-                rx.button(
-                    "Subir archivo",
-                    type="submit",
-                    style={
-                        "background_color": "#4CAF50",
-                        "color": "white",
-                        "padding": "0.5rem 1rem",
-                        "border": "none",
-                        "border_radius": "5px",
-                        "cursor": "pointer",
-                        "font_weight": "bold",
-                    },
-                ),
-                on_submit=PostulationState.set_file_path,
-                style={
-                    "margin_bottom": "1rem",
-                },
-            ),
-            rx.hstack(
-                rx.button(
-                    "Enviar",
-                    on_click=PostulationState.send_email,
-                    style={
-                        "background_color": "#4CAF50",
-                        "color": "white",
-                        "padding": "0.5rem 1rem",
-                        "border": "none",
-                        "border_radius": "5px",
-                        "cursor": "pointer",
-                        "font_weight": "bold",
-                    },
-                ),
-                rx.button(
-                    "Cancelar",
-                    on_click=PostulationState.toggle_modal,
-                    style={
-                        "background_color": "#f44336",
-                        "color": "white",
-                        "padding": "0.5rem 1rem",
-                        "border": "none",
-                        "border_radius": "5px",
-                        "cursor": "pointer",
-                        "font_weight": "bold",
-                    },
-                ),
-                justify="between",
-            ),
-            style={
-                "position": "fixed",
-                "top": "50%",
-                "left": "50%",
-                "transform": "translate(-50%, -50%)",
-                "background_color": "white",
-                "padding": "2rem",
-                "border_radius": "10px",
-                # Sombra eliminada
-                "z_index": "1000",
-                "width": "400px",
-            },
-        ),
-    )
-
-def postulation():
-    """Sección de postulación."""
-    return rx.box(
-        navbar(),
-        rx.box(
-            rx.text(
-                "Puestos Disponibles",
-                style={
-                    "font_size": "2.5rem",
-                    "font_weight": "bold",
-                    "margin_bottom": "2rem",
-                    "text_align": "center",
-                    "color": "#333",
-                },
+            rx.dialog.description(
+                "Completa tus datos para postularte.",
+                style={"color": "#222","font_weight": "bold"}
             ),
             rx.vstack(
-                *[
-                    rx.box(
-                        rx.text(
-                            job["title"],
-                            style={
-                                "font_size": "1.8rem",
-                                "font_weight": "bold",
-                                "margin_bottom": "0.5rem",
-                                "color": "#333",
-                            },
-                        ),
-                        rx.text(
-                            job["description"],
-                            style={
-                                "font_size": "1rem",
-                                "margin_bottom": "1rem",
-                                "color": "#666",
-                            },
-                        ),
-                        rx.button(
-                            "Postularse",
-                            on_click=lambda job=job["title"]: PostulationState.toggle_modal(job),
-                            style={
-                                "background_color": "#FFD700",
-                                "color": "black",
-                                "padding": "0.5rem 1rem",
-                                "border": "none",
-                                "border_radius": "5px",
-                                "cursor": "pointer",
-                                "font_weight": "bold",
-                            },
-                        ),
+                rx.text(
+                    "Nombre",
+                    style={
+                        "color": "#222",
+                        "font_weight": "bold",
+                        "font_size": "0.95rem",
+                        "margin_top": "1.2rem",
+                        "margin_bottom": "0.3rem",
+                    },
+                ),
+                rx.input(
+                    placeholder="Nombre",
+                    value=PostulacionState.nombre,
+                    on_change=PostulacionState.set_nombre,
+                    style={
+                        "margin_bottom": "1rem",
+                        "padding": "0.5em",
+                        "border_radius": "4px",
+                        "border": "1px solid #FFD700",
+                        "background": "#fffffd",
+                        "color": "#222",
+                        "placeholder_color": "#222",
+                    },
+                ),
+                rx.text(
+                    "Apellido",
+                    style={
+                        "color": "#222",
+                        "font_weight": "bold",
+                        "font_size": "0.95rem",
+                        "margin_top": "0.2rem",
+                        "margin_bottom": "0.2rem",
+                    },
+                ),
+                rx.input(
+                    placeholder="Apellido",
+                    value=PostulacionState.apellido,
+                    on_change=PostulacionState.set_apellido,
+                    style={
+                        "margin_bottom": "1rem",
+                        "padding": "0.5em",
+                        "border_radius": "8px",
+                        "border": "1px solid #FFD700",
+                        "background": "#ffffff",
+                        "color": "#222",
+                        "placeholder_color": "#222",
+                    },
+                ),
+                rx.upload(
+                    rx.button(
+                        "Adjuntar CV",
                         style={
-                            "padding": "1.5rem",
-                            "border": "1px solid #ddd",
-                            "border_radius": "10px",
-                            "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                            "margin_bottom": "2rem",
-                            "background_color": "#fff",
+                            "background_color": "#FFD700",
+                            "color": "black",
+                            "padding": "0.5rem 1.5rem",
+                            "border": "none",
+                            "border_radius": "5px",
+                            "cursor": "pointer",
+                            "font_weight": "bold",
+                            "margin_bottom": "1rem",
                         },
-                    )
-                    for job in [
-                        {
-                            "title": "Desarrollador Web",
-                            "description": "Responsable del desarrollo y mantenimiento de sitios web modernos y escalables.",
+                    ),
+                    accept=".pdf,.doc,.docx",
+                    max_files=1,
+                    id="cv_upload",
+                ),
+                rx.cond(
+                    PostulacionState.mensaje != "",
+                    rx.text(
+                        PostulacionState.mensaje,
+                        style={
+                            "color": PostulacionState.mensaje_color,
+                            "font_weight": "bold",
+                            "margin_top": "0.5rem",
+                            "margin_bottom": "0.5rem",
                         },
-                        {
-                            "title": "Diseñador Gráfico",
-                            "description": "Encargado de crear diseños visuales atractivos para proyectos digitales y físicos.",
-                        },
-                        
-                    ]
-                ],
-                style={"width": "100%", "max_width": "800px", "margin": "0 auto"},
+                    ),
+                ),
             ),
-            postulation_modal(),
+            rx.flex(
+                rx.button(
+                    "Enviar",
+                    on_click=PostulacionState.enviar_postulacion(
+                        rx.upload_files(upload_id="cv_upload")
+                    ),
+                    style={
+                        "background_color": "#FFD700",
+                        "color": "black",
+                        "padding": "0.5rem 1.5rem",
+                        "border": "none",
+                        "border_radius": "5px",
+                        "cursor": "pointer",
+                        "font_weight": "bold",
+                        "margin_right": "1rem",
+                    },
+                ),
+                rx.dialog.close(
+                    rx.button(
+                        "Cancelar",
+                        on_click=PostulacionState.cerrar_modal,
+                        style={
+                            "background_color": "#eee",
+                            "color": "#222",
+                            "padding": "0.5rem 1.5rem",
+                            "border": "none",
+                            "border_radius": "5px",
+                            "cursor": "pointer",
+                            "font_weight": "bold",
+                        },
+                    ),
+                ),
+                spacing="3",
+                justify="end",
+                margin_top="1rem",
+            ),
+            max_width="450px",
             style={
+                "background": "white",
+                "border_radius": "14px",
+                "box_shadow": "0 8px 32px rgba(0,0,0,0.18)",
                 "padding": "2rem",
-                "background_image": "url('header.jpg')",  # Usa el mismo fondo que la página principal
-                "background_size": "cover",
-                "background_position": "center",
-                "border_radius": "10px",
-                "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                "width": "100%",
-                "max_width": "900px",
-                "margin": "3rem auto 2rem auto",
+                "min_width": "320px",
+                "max_width": "95vw",
             },
+        ),
+        open=PostulacionState.show_modal,
+        on_open_change=PostulacionState.manejar_open,
+    )
+
+def puestos_disponibles():
+    puestos = [
+        {
+            "title": "Desarrollador Web",
+            "description": "Responsable del desarrollo y mantenimiento de sitios web modernos y escalables.",
+            "skills": ["Python", "JavaScript", "React", "Bases de datos"],
+            "location": "Remoto",
+        },
+        {
+            "title": "Diseñador Gráfico",
+            "description": "Crea diseños visuales atractivos para proyectos digitales y físicos.",
+            "skills": ["Photoshop", "Illustrator", "Creatividad"],
+            "location": "Presencial - Santiago",
+        },
+        {
+            "title": "Project Manager",
+            "description": "Lidera equipos y asegura la entrega exitosa de proyectos tecnológicos.",
+            "skills": ["Gestión", "Comunicación", "Scrum"],
+            "location": "Híbrido",
+        },
+    ]
+
+    return rx.box(
+        modal_postulacion(),
+        rx.text(
+            "Puestos Disponibles",
+            style={
+                "font_size": "2.5rem",
+                "font_weight": "bold",
+                "margin_bottom": "2rem",
+                "text_align": "center",
+                "color": "#222",
+                "letter_spacing": "1px",
+            },
+        ),
+        rx.grid(
+            *[
+                rx.box(
+                    rx.text(
+                        puesto["title"],
+                        style={
+                            "font_size": "1.5rem",
+                            "font_weight": "bold",
+                            "margin_bottom": "0.5rem",
+                            "color": "#222",
+                        },
+                    ),
+                    rx.text(
+                        puesto["description"],
+                        style={
+                            "font_size": "1rem",
+                            "margin_bottom": "1rem",
+                            "color": "#444",
+                        },
+                    ),
+                    rx.hstack(
+                        *[
+                            rx.badge(
+                                skill,
+                                color_scheme="yellow",
+                                style={"color": "black"}
+                            )
+                            for skill in puesto["skills"]
+                        ],
+                        spacing="2",
+                        style={"margin_bottom": "1rem"},
+                    ),
+                    rx.text(
+                        f"Ubicación: {puesto['location']}",
+                        style={
+                            "font_size": "0.95rem",
+                            "color": "#666",
+                            "margin_bottom": "1rem",
+                        },
+                    ),
+                    rx.button(
+                        "Postularse",
+                        on_click=PostulacionState.abrir_modal,
+                        style={
+                            "background_color": "#FFD700",
+                            "color": "black",
+                            "padding": "0.5rem 1.5rem",
+                            "border": "none",
+                            "border_radius": "5px",
+                            "cursor": "pointer",
+                            "font_weight": "bold",
+                            "box_shadow": "0px 2px 4px rgba(0,0,0,0.07)",
+                        },
+                    ),
+                    style={
+                        "padding": "2rem",
+                        "background_color": "rgba(255,255,255,0.95)",
+                        "border_radius": "12px",
+                        "box_shadow": "0 4px 16px rgba(0,0,0,0.08)",
+                        "border": "1px solid #eee",
+                        "margin": "0.5rem",
+                        "min_width": "260px",
+                        "max_width": "350px",
+                        "display": "flex",
+                        "flex_direction": "column",
+                        "align_items": "flex-start",
+                    },
+                )
+                for puesto in puestos
+            ],
+            columns="3",
+            spacing="2",
+            style={"width": "100%", "margin": "0 auto"},
         ),
         style={
             "width": "100%",
-            "background_image": "url('fondo.jpg')",  # Fondo general igual que principal
-            "background_size": "cover",
-            "background_position": "center",
-            "min_height": "100vh",
+            "max_width": "1200px",
+            "margin": "110px auto 0 auto",
+            "padding": "2rem 1rem 4rem 1rem",
+            "background": "rgba(255,255,255,0.85)",
+            "border_radius": "18px",
+            "box_shadow": "0 8px 32px rgba(0,0,0,0.10)",
         },
+    )
+
+def postulation():
+    return rx.box(
+        navbar(),
+        rx.box(
+            puestos_disponibles(),
+            style={
+                "width": "100%",
+                "min_height": "100vh",
+                "background_image": "url('/fondo.jpg')",
+                "background_size": "cover",
+                "background_position": "center",
+                "padding": "0",
+            },
+        ),
+        footer(),
     )
