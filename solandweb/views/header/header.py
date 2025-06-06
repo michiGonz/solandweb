@@ -18,20 +18,94 @@ def hero_section() -> rx.Component:
                         "Servicios y Suministros Soland C.A",
                         class_name="title",
                         style={
-                            "font_weight": "1000",  # Letra más gruesa
-                            "font_size": "5rem",  # Tamaño grande
-                            "color": "black",  # Color del texto
-                            "text_align": "center",  # Centrar el texto
-                            "letter_spacing": "0.1em",  # Espaciado entre letras
-                            "padding": "0.5rem",  # Relleno interno
-                            "background": "rgba(255, 255, 255, 0.2)",  # Fondo transparente
-                            "border_radius": "5px",  # Bordes redondeados
-                            "display": "inline-block",  # Ajustar el fondo al tamaño del texto
+                            "font_weight": "1000",
+                            "font_size": "5rem",
+                            "color": "black",
+                            "text_align": "center",
+                            "letter_spacing": "0.1em",
+                            "padding": "0.5rem",
+                            "display": "inline-block",
+                            "text_shadow": (
+                                "0 0 32px #fff,"
+                                "0 0 64px #fff,"
+                                "0 0 128px #fff,"
+                                "0 0 256px #fff,"
+                                "0 0 8px #ffe066,"
+                                "0 0 16px #ffe066"
+                            ),
+                            "animation": "glow 2s ease-in-out infinite alternate",
                         },
                     ),
+                    rx.html(
+                        """
+                        <style>
+                        @keyframes glow {
+                            0% {
+                                text-shadow:
+                                    0 0 32px #fff,
+                                    0 0 64px #fff,
+                                    0 0 128px #fff,
+                                    0 0 256px #fff,
+                                    0 0 8px #ffe066,
+                                    0 0 16px #ffe066;
+                            }
+                            100% {
+                                text-shadow:
+                                    0 0 64px #fff,
+                                    0 0 128px #fff,
+                                    0 0 256px #fff,
+                                    0 0 512px #fff,
+                                    0 0 32px #ffe066,
+                                    0 0 64px #ffe066;
+                            }
+                        }
+                        </style>
+                        """
+                    ),
                 ),
-                rx.text("Somos una empresa venezolana con mas de 21 años de experiencia en el area de ingeniería.", size="4"),
-                rx.button("Contáctanos", href="#contacto", color_scheme="teal"),
+                # ...existing code...
+                rx.text(
+                    "Somos una empresa venezolana con más de 21 años de experiencia en el área de ingeniería.",
+                    size="4",
+                    style={
+                        "font_weight": "900",
+                        "background_color": "rgba(255,255,255,0.75)", 
+                        "padding": "1.1rem 2rem",
+                        "border_radius": "18px",
+                        "color": "#222",
+                        "text_align": "center",
+                        "margin": "1.5rem 0 2rem 0",
+                        "display": "inline-block",
+                        "box_shadow": "0 4px 32px 0 #ffe066, 0 2px 8px rgba(0,0,0,0.08)",
+                        "font_size": "1.45rem",
+                        "letter_spacing": "0.03em",
+                        "transition": "box-shadow 0.3s",
+                    },
+                ),
+                rx.button(
+                    "Contáctanos",
+                    href="#contacto",
+                    style={
+                        "background": "linear-gradient(90deg, #ffe066 60%, #fffbe6 100%)",
+                        "color": "#222",
+                        "font_weight": "bold",
+                        "padding": "1rem 2.2rem",
+                        "border_radius": "12px",
+                        "border": "none",
+                        "box_shadow": "0 0 24px 4px #ffe066, 0 2px 8px rgba(0,0,0,0.10)",
+                        "font_size": "1.25rem",
+                        "cursor": "pointer",
+                        "margin_top": "0.7rem",
+                        "letter_spacing": "0.04em",
+                        "transition": "background 0.3s, box-shadow 0.3s, transform 0.2s",
+                    },
+                    _hover={
+                        "background": "linear-gradient(90deg, #fffbe6 0%, #ffe066 100%)",
+                        "box_shadow": "0 0 48px 8px #ffe066, 0 4px 16px rgba(0,0,0,0.13)",
+                        "transform": "scale(1.04)",
+                    },
+                ),
+# ...existing code...
                 spacing="2",
                 align_items="center",
             ),

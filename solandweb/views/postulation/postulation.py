@@ -1,6 +1,8 @@
 import reflex as rx
 from solandweb.views.navbar.navbar import navbar
 from solandweb.views.footer.footer import footer
+import smtplib
+from email.message import EmailMessage
 
 class PostulacionState(rx.State):
     show_modal: bool = False
@@ -37,18 +39,38 @@ class PostulacionState(rx.State):
             return
         try:
             cv_bytes = await files[0].read()
-            # Aquí deberías manejar el envío (por ejemplo, guardar el archivo o enviar por email)
-            # Simulación de éxito:
+            # Configura tus datos de correo
+            EMAIL_ADDRESS = "rrhh.soland@gmail.com"
+            EMAIL_PASSWORD = "uxqngmchpyylwuga"
+            TO_EMAIL = "rrhh.soland@gmail.com"
+
+            msg = EmailMessage()
+            msg["Subject"] = "Nueva postulación"
+            msg["From"] = EMAIL_ADDRESS
+            msg["To"] = TO_EMAIL
+            msg.set_content(
+                f"Nombre: {self.nombre}\nApellido: {self.apellido}\nAdjunto CV."
+            )
+            uploaded_file = files[0]
+            filename = uploaded_file.name
+            content_type = uploaded_file.content_type or "application/octet-stream"
+            maintype, subtype = content_type.split("/", 1)
+            
+            msg.add_attachment(cv_bytes, maintype=maintype, subtype=subtype, filename=filename)
+            
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+                smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+                smtp.send_message(msg)
+
             self.mensaje = "¡Enviado correctamente!"
             self.mensaje_color = "#388e3c"
-           
         except Exception:
             self.mensaje = "Ocurrió un error al enviar. Intenta de nuevo."
             self.mensaje_color = "#d32f2f"
 
 def modal_postulacion():
     return rx.dialog.root(
-        rx.dialog.trigger(rx.box()),  # Trigger vacío, controlado por show_modal
+        rx.dialog.trigger(rx.box()),
         rx.dialog.content(
             rx.dialog.title(
                 "Postulación",
@@ -56,7 +78,7 @@ def modal_postulacion():
             ),
             rx.dialog.description(
                 "Completa tus datos para postularte.",
-                style={"color": "#222","font_weight": "bold"}
+                style={"color": "#222", "font_weight": "bold"}
             ),
             rx.vstack(
                 rx.text(
@@ -220,6 +242,7 @@ def puestos_disponibles():
                 "margin_bottom": "2rem",
                 "text_align": "center",
                 "color": "#222",
+                "color": "#fff",  # <-- Cambia a blanco
                 "letter_spacing": "1px",
             },
         ),
@@ -282,8 +305,9 @@ def puestos_disponibles():
                         "background_color": "rgba(255,255,255,0.95)",
                         "border_radius": "12px",
                         "box_shadow": "0 4px 16px rgba(0,0,0,0.08)",
-                        "border": "1px solid #eee",
                         "margin": "0.5rem",
+                        "box_shadow": "0 0 16px 4px #ffe066, 0 4px 16px rgba(0,0,0,0.08)",  # Luz amarilla suave
+                        "border": "2px solid #ffe066",  # Borde amarillo claro
                         "min_width": "260px",
                         "max_width": "350px",
                         "display": "flex",
@@ -302,9 +326,7 @@ def puestos_disponibles():
             "max_width": "1200px",
             "margin": "110px auto 0 auto",
             "padding": "2rem 1rem 4rem 1rem",
-            "background": "rgba(255,255,255,0.85)",
-            "border_radius": "18px",
-            "box_shadow": "0 8px 32px rgba(0,0,0,0.10)",
+            # Quita background, border_radius y box_shadow aquí para que no tenga fondo blanco
         },
     )
 
@@ -316,7 +338,7 @@ def postulation():
             style={
                 "width": "100%",
                 "min_height": "100vh",
-                "background_image": "url('/fondo.jpg')",
+                "background_image": "url('/about.jpg')",  # Cambia por tu imagen de fondo
                 "background_size": "cover",
                 "background_position": "center",
                 "padding": "0",

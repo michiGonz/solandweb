@@ -24,11 +24,21 @@ def about():
         ),
         rx.hstack(     
             rx.box(
+                rx.text(
+                    "V I S I O N",
+                    style={
+                        "font_size": "1.3rem",
+                        "font_weight": "bold",
+                        "letter_spacing": "0.5rem",
+                        "color": "#000000",
+                        "text_align": "center",
+                        "margin_bottom": "0.5rem",
+                    },
+                ),
                 rx.image(src="/imagen2.jpg", alt="Our Mission", style={"width": "100%", "border_radius": "8px"}),
-                rx.text("Vision", style={"font_weight": "bold", "margin_top": "0.5rem"}),
                 rx.text(
                     "Discover our goals and how we aim to achieve them.",
-                    style={"color": "#000000", "margin_bottom": "1rem"},
+                    style={"color": "#000000", "margin_bottom": "3rem", "margin_top": "1.5rem"},
                 ),
                 rx.button(
                     "Learn more",
@@ -45,15 +55,27 @@ def about():
                 style={
                     "text_align": "center",
                     "padding": "1rem",
-                    "border": "1px solid #ddd",
+                    "box_shadow": "0 0 32px 8px #fff700",
+                    "border": "2px solid #ffe066",
                     "border_radius": "8px",
-                    "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
                     "width": "30%",
+                    "background_color": "rgba(255,255,255,0.85)",
                 },
             ),
             rx.box(
+                rx.text(
+                    "M I S I O N",
+                    style={
+                        "font_size": "1.3rem",
+                        "font_weight": "bold",
+                        "letter_spacing": "0.5rem",
+                        "color": "#000000",
+                        "text_align": "center",
+                        "margin_bottom": "0.5rem",
+                    },
+                ),
                 rx.image(src="/imagen2.jpg", alt="Nuestra Misión", style={"width": "100%", "border_radius": "8px"}),
-                rx.text("Misión", style={"font_weight": "bold", "margin_top": "0.5rem"}),
+
                 rx.text(
                     """Satisfacer las necesidades de nuestros clientes, compañías, concesionarios, distribuidores,
 accionistas, trabajadores y suplidores, a través de nuestros productos y de la gestión de nuestros
@@ -63,14 +85,15 @@ y crecimiento sostenido, contribuyendo con el mejoramiento de la calidad de vida
 gente comprometida y valores institucionales, aportando responsablemente al desarrollo de nuestro país.""",
                     style={
                         "color": "#000000",
-                        "margin_bottom": "1rem",
+                        "margin_bottom": "3rem",
                         "text_align": "justify",
+                        "margin_top": "1.5rem",
                     },
                 ),
                 rx.button(
                     "Learn more",
                     style={
-                        "background_color": "#ffcc00",
+                        "background_color": "#ffe066",
                         "color": "black",
                         "padding": "0.5rem 1rem",
                         "border": "none",
@@ -82,14 +105,15 @@ gente comprometida y valores institucionales, aportando responsablemente al desa
                 style={
                     "text_align": "center",
                     "padding": "1rem",
-                    "border": "1px solid #ddd",
+                    "box_shadow": "0 0 32px 8px #ffe066",
+                    "border": "2px solid #ffe066",
                     "border_radius": "8px",
-                    "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
                     "width": "30%",
+                    "background_color": "rgba(255,255,255,0.85)",
                 },
             ),
-            justify="center",  # Centra los contenedores horizontalmente
-            spacing="2",
+            justify="center",
+            spacing="9",
         ),
         style={
             "padding": "2rem",
