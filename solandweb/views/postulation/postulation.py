@@ -2,6 +2,7 @@ import reflex as rx
 from solandweb.views.navbar.navbar import navbar
 from solandweb.views.footer.footer import footer
 import smtplib
+import solandweb.theme as theme
 from email.message import EmailMessage
 
 class PostulacionState(rx.State):

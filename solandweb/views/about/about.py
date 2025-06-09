@@ -1,4 +1,5 @@
 import reflex as rx
+import solandweb.theme as theme
 
 def about():
     return rx.box(
@@ -8,7 +9,7 @@ def about():
                 "font_size": "2.5rem",
                 "font_weight": "bold",
                 "margin_bottom": "1rem",
-                "color": "#333",
+                "color": rx.cond(theme.ThemeState.dark_mode, "#fff", "#333"),  # Blanco en modo oscuro
                 "text_align": "center",
             },
         ),
@@ -16,7 +17,7 @@ def about():
             "Learn more about our team and what drives us to deliver the best solutions for you.",
             style={
                 "font_size": "1rem",
-                "color": "#000000",
+                "color": rx.cond(theme.ThemeState.dark_mode, "#000000", "#333"),
                 "text_align": "center",
                 "margin_bottom": "2rem",
                 "line_height": "1.5",
@@ -30,7 +31,7 @@ def about():
                         "font_size": "1.3rem",
                         "font_weight": "bold",
                         "letter_spacing": "0.5rem",
-                        "color": "#000000",
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "#000000"),
                         "text_align": "center",
                         "margin_bottom": "0.5rem",
                     },
@@ -38,28 +39,46 @@ def about():
                 rx.image(src="/imagen2.jpg", alt="Our Mission", style={"width": "100%", "border_radius": "8px"}),
                 rx.text(
                     "Discover our goals and how we aim to achieve them.",
-                    style={"color": "#000000", "margin_bottom": "3rem", "margin_top": "1.5rem"},
+                    style={
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "#000000"),
+                        "margin_bottom": "3rem",
+                        "margin_top": "1.5rem"
+                    },
                 ),
                 rx.button(
                     "Learn more",
                     style={
-                        "background_color": "#ffcc00",
-                        "color": "black",
+                        "background_color": rx.cond(theme.ThemeState.dark_mode, "#222", "#ffcc00"),
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "black"),
                         "padding": "0.5rem 1rem",
                         "border": "none",
                         "border_radius": "5px",
                         "cursor": "pointer",
                         "font_weight": "bold",
+                        "box_shadow": rx.cond(
+                            theme.ThemeState.dark_mode,
+                            "0 0 32px 8px #ffe066",
+                            "0 0 32px 8px #fff700"
+                        ),
+                        "transition": "background 0.3s, color 0.3s"
                     },
                 ),
                 style={
                     "text_align": "center",
                     "padding": "1rem",
-                    "box_shadow": "0 0 32px 8px #fff700",
+                    "box_shadow": rx.cond(
+                        theme.ThemeState.dark_mode,
+                        "0 0 32px 8px #222",
+                        "0 0 32px 8px #fff700"
+                    ),
                     "border": "2px solid #ffe066",
                     "border_radius": "8px",
                     "width": "30%",
-                    "background_color": "rgba(255,255,255,0.85)",
+                    "background_color": rx.cond(
+                        theme.ThemeState.dark_mode,
+                        "rgba(34,34,34,0.85)",
+                        "rgba(255,255,255,0.85)"
+                    ),
                 },
             ),
             rx.box(
@@ -69,7 +88,7 @@ def about():
                         "font_size": "1.3rem",
                         "font_weight": "bold",
                         "letter_spacing": "0.5rem",
-                        "color": "#000000",
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "#000000"),
                         "text_align": "center",
                         "margin_bottom": "0.5rem",
                     },
@@ -84,7 +103,7 @@ protección ambiental, eficiencia y competitividad, con la mejor relación preci
 y crecimiento sostenido, contribuyendo con el mejoramiento de la calidad de vida de la comunidad, tecnología de vanguardia,
 gente comprometida y valores institucionales, aportando responsablemente al desarrollo de nuestro país.""",
                     style={
-                        "color": "#000000",
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "#000000"),
                         "margin_bottom": "3rem",
                         "text_align": "justify",
                         "margin_top": "1.5rem",
@@ -93,23 +112,37 @@ gente comprometida y valores institucionales, aportando responsablemente al desa
                 rx.button(
                     "Learn more",
                     style={
-                        "background_color": "#ffe066",
-                        "color": "black",
+                        "background_color": rx.cond(theme.ThemeState.dark_mode, "#222", "#ffe066"),
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "black"),
                         "padding": "0.5rem 1rem",
                         "border": "none",
                         "border_radius": "5px",
                         "cursor": "pointer",
                         "font_weight": "bold",
+                        "box_shadow": rx.cond(
+                            theme.ThemeState.dark_mode,
+                            "0 0 32px 8px #ffe066",
+                            "0 0 32px 8px #ffe066"
+                        ),
+                        "transition": "background 0.3s, color 0.3s"
                     },
                 ),
                 style={
                     "text_align": "center",
                     "padding": "1rem",
-                    "box_shadow": "0 0 32px 8px #ffe066",
+                    "box_shadow": rx.cond(
+                        theme.ThemeState.dark_mode,
+                        "0 0 32px 8px #222",
+                        "0 0 32px 8px #ffe066"
+                    ),
                     "border": "2px solid #ffe066",
                     "border_radius": "8px",
                     "width": "30%",
-                    "background_color": "rgba(255,255,255,0.85)",
+                    "background_color": rx.cond(
+                        theme.ThemeState.dark_mode,
+                        "rgba(34,34,34,0.85)",
+                        "rgba(255,255,255,0.85)"
+                    ),
                 },
             ),
             justify="center",
@@ -118,8 +151,14 @@ gente comprometida y valores institucionales, aportando responsablemente al desa
         style={
             "padding": "2rem",
             "background_image": "url('/prueba.png')", 
+            "background_color": rx.cond(theme.ThemeState.dark_mode, "#181818", "#fff"),
             "border_radius": "10px",
-            "box_shadow": "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            "box_shadow": rx.cond(
+                theme.ThemeState.dark_mode,
+                "0px 4px 12px #222",
+                "0px 4px 6px rgba(0, 0, 0, 0.1)"
+            ),
             "width": "100%",
+            "transition": "background 0.3s, box-shadow 0.3s"
         },
     )
