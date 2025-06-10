@@ -4,6 +4,7 @@ from solandweb.styles.styles import Size as Size
 import solandweb.theme as theme
 from solandweb.views.navbar.navbar import navbar  # Importa el navbar
 
+
 def hero_section() -> rx.Component:
     """Hero section."""
     return rx.box(
@@ -11,29 +12,13 @@ def hero_section() -> rx.Component:
         rx.box(
             rx.vstack(
                 rx.center(
-                    rx.text(
-                        "Servicios y Suministros Soland C.A",
-                        class_name="title",
+                    rx.image(
+                        src="/logo.png",
+                        alt="Logo Soland",
+                        width="640px",
+                        margin_bottom="1.5rem",
                         style={
-                            "font_weight": "1000",
-                            "font_size": "5rem",
-                            "color": rx.cond(
-                                theme.ThemeState.dark_mode,
-                                "#ffe066",  # Mostaza en oscuro
-                                "black"
-                            ),
-                            "text_align": "center",
-                            "letter_spacing": "0.1em",
-                            "padding": "0.5rem",
-                            "display": "inline-block",
-                            "text_shadow": (
-                                "0 0 32px #fff,"
-                                "0 0 64px #fff,"
-                                "0 0 128px #fff,"
-                                "0 0 256px #fff,"
-                                "0 0 8px #ffe066,"
-                                "0 0 16px #ffe066"
-                            ),
+                            "filter": "drop-shadow(0 0 32px #fff) drop-shadow(0 0 64px #ffe066)",
                             "animation": "glow 2s ease-in-out infinite alternate",
                         },
                     ),
@@ -42,22 +27,14 @@ def hero_section() -> rx.Component:
                         <style>
                         @keyframes glow {
                             0% {
-                                text-shadow:
-                                    0 0 32px #fff,
-                                    0 0 64px #fff,
-                                    0 0 128px #fff,
-                                    0 0 256px #fff,
-                                    0 0 8px #ffe066,
-                                    0 0 16px #ffe066;
+                                filter:
+                                    drop-shadow(0 0 32px #fff)
+                                    drop-shadow(0 0 64px #ffe066);
                             }
                             100% {
-                                text-shadow:
-                                    0 0 64px #fff,
-                                    0 0 128px #fff,
-                                    0 0 256px #fff,
-                                    0 0 512px #fff,
-                                    0 0 32px #ffe066,
-                                    0 0 64px #ffe066;
+                                filter:
+                                    drop-shadow(0 0 64px #fff)
+                                    drop-shadow(0 0 128px #ffe066);
                             }
                         }
                         </style>
@@ -155,7 +132,31 @@ def hero_section() -> rx.Component:
             },
             id="inicio",
         ),
-    )
+        rx.html(
+          """
+   <div style="width:100%;overflow:hidden;line-height:0;margin-bottom:-1px;">
+            <svg viewBox="0 0 1200 100" width="100%" height="100" preserveAspectRatio="none" style="display:block;">
+                <defs>
+                  <linearGradient id="degradeSoland" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#fffbe6" />
+                    <stop offset="15%" stop-color="#f7e9c2" />
+                    <stop offset="35%" stop-color="#ffe066" />
+                    <stop offset="65%" stop-color="#ffd700" />
+                    <stop offset="85%" stop-color="#b8860b" />
+                    <stop offset="100%" stop-color="#f5d06f" />
+                  </linearGradient>
+                  <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#ffe06688"/>
+                  </filter>
+                </defs>
+                <path d="M0,60 Q300,100 600,60 T1200,60 L1200,100 L0,100 Z"
+                      fill="url(#degradeSoland)" filter="url(#softShadow)"/>
+            </svg>
+        </div>
+
+        """
+     ), 
+)
 
 def about_section() -> rx.Component:
     """About section."""
