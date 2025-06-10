@@ -8,7 +8,8 @@ from solandweb.views.postulation.postulation import postulation
 from solandweb.views.jobs_carrusel.job_carrusel import job_carrusel, CarruselState  # Importa el carrusel y su estado
 from solandweb.views.footer.footer import footer
 from solandweb.views.services.servicios import servicios_section  # Importa la sección de servicios
-#from solandweb.views.sidebar.sidebar import sidebar  # Importa la barra lateral si es necesario
+from solandweb.views.ws.ws import whatsapp_button  # Importa el botón de WhatsApp
+
 
 class State(rx.State):
     pass
@@ -20,6 +21,7 @@ def index() -> rx.Component:
         hero_section(),  # Sección principal
         about(),  # Sección "Acerca de"
         servicios_section(),
+        whatsapp_button(),  # Botón de WhatsApp
         #sidebar(),
         footer()
     )
