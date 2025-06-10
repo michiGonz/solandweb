@@ -238,15 +238,18 @@ def puestos_disponibles():
         rx.text(
             "Puestos Disponibles",
             style={
-                "font_size": "2.5rem",
-                "font_weight": "bold",
-                "margin_bottom": "2rem",
-                "text_align": "center",
-                "color": "#222",
-                "color": "#fff",  # <-- Cambia a blanco
-                "letter_spacing": "1px",
+           "font_size": "4rem",
+            "font_weight": "900",
+            "margin_bottom": "0.5rem",
+            "color": "#ffe066",
+            "text_shadow": "0 2px 12px #222, 0 1px 8px #ffe066cc",
+            "letter_spacing": "0.04em",
+            "text_transform": "uppercase",
+            "text_align": "center",
+            "width": "100%",
             },
         ),
+        
         rx.grid(
             *[
                 rx.box(

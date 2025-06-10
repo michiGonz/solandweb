@@ -6,7 +6,6 @@ import solandweb.theme as theme
 def navbar():
     return rx.box(
         rx.hstack(
-            # Logo de la empresa
             rx.image(
                 src="/logo.png",
                 alt="Logo",
@@ -16,58 +15,79 @@ def navbar():
                     "margin_right": "2rem",
                 },
             ),
-            # Menú principal
+            rx.html(
+                """
+                <style>
+                .nav-link {
+                    cursor: pointer;
+                    font-weight: bold;
+                    color: #222;
+                    margin-right: 1.5rem;
+                    font-size: 1.08rem;
+                    letter-spacing: 0.04em;
+                    text-decoration: none;
+                    padding: 0.3rem 0.7rem;
+                    border-radius: 8px;
+                    transition: background 0.2s, color 0.2s;
+                }
+                .nav-link:hover {
+                    background: #ffe06622;
+                }
+                 .navbar-dark .nav-link {
+                    color: #fff !important;
+                }
+                </style>
+                """
+            ),
             rx.hstack(
                 rx.link(
                     "Inicio",
                     href="/",
+                    class_name="nav-link",
                     style={
-                        "cursor": "pointer",
-                        "font_weight": "bold",
-                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "black"),
-                        "margin_right": "1.5rem"
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "#222"),
                     },
                 ),
-                rx.text(
+                rx.link(
                     "Servicios",
+                    href="#servicios",
+                    class_name="nav-link",
                     style={
-                        "cursor": "pointer",
-                        "font_weight": "bold",
-                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "black"),
-                        "margin_right": "1.5rem"
-                    }
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "#222"),
+                    },
+                    on_click=rx.call_script(
+                        """
+                        document.querySelector('#servicios').scrollIntoView({ behavior: 'smooth' });
+                        """
+                    ),
                 ),
-                rx.text(
+                rx.link(
                     "Portafolio",
+                    href="#portafolio",
+                    class_name="nav-link",
                     style={
-                        "cursor": "pointer",
-                        "font_weight": "bold",
-                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "black"),
-                        "margin_right": "1.5rem"
-                    }
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "#222"),
+                    },
                 ),
-                rx.text(
+                rx.link(
                     "Blog",
+                    href="#blog",
+                    class_name="nav-link",
                     style={
-                        "cursor": "pointer",
-                        "font_weight": "bold",
-                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "black"),
-                        "margin_right": "1.5rem"
-                    }
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "#222"),
+                    },
                 ),
                 rx.link(
                     "Puestos disponibles",
                     href="/postulation",
+                    class_name="nav-link",
                     style={
-                        "cursor": "pointer",
-                        "font_weight": "bold",
-                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "black"),
+                        "color": rx.cond(theme.ThemeState.dark_mode, "#ffe066", "#222"),
                         "margin_left": "1.5rem"
                     },
                 ),
                 spacing="1",
             ),
-            # Botón de acción
             rx.button(
                 "Contáctanos",
                 style={
@@ -86,7 +106,6 @@ def navbar():
                 },
                 on_click=lambda: rx.redirect("/contact"),
             ),
-            # Botón modo oscuro
             rx.button(
                 rx.cond(
                     theme.ThemeState.dark_mode,
@@ -133,5 +152,13 @@ def navbar():
                 "transition": "background-color 0.3s, box-shadow 0.3s"
             },
         ),
-        style={"width": "100%"},
+        style={
+            "width": "100%"
+        },
+            class_name= rx.cond(
+                theme.ThemeState.dark_mode,
+                "navbar-dark",
+                ""
+            ),
+
     )
