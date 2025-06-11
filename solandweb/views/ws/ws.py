@@ -12,17 +12,10 @@ def whatsapp_button():
             style={
                 "display": "flex",
                 "align_items": "center",
-                "gap": "8px",
                 "position": "fixed",
                 "bottom": "32px",
                 "right": "32px",
-                "color": "white",
-                "padding": "16px 24px",
-                "font_weight": "bold",
-                "font_size": "1.1em",
-                "z_index": 9999,
                 "cursor": "pointer",
-                "box_shadow": "none",
                 "background": "none"
             }
         ),

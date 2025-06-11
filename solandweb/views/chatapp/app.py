@@ -1,10 +1,17 @@
 import reflex as rx
-from .state import State  # Ajusta la ruta según tu estructura
+from solandweb.views.chatapp import style
+from solandweb.views.chatapp import State
 
 def qa(question: str, answer: str) -> rx.Component:
     return rx.box(
-        rx.box(rx.text(question), text_align="right"),
-        rx.box(rx.text(answer), text_align="left"),
+        rx.box(
+            rx.text(question, style=style.question_style),
+            text_align="right",
+        ),
+        rx.box(
+            rx.text(answer, style=style.answer_style),
+            text_align="left",
+        ),
         margin_y="1em",
     )
 
@@ -20,12 +27,14 @@ def action_bar() -> rx.Component:
     return rx.hstack(
         rx.input(
             value=State.question,
-            placeholder="Escribe tu pregunta...",
+            placeholder="Haz una pregunta",
             on_change=State.set_question,
+            style=style.input_style,
         ),
         rx.button(
-            "Enviar",
+            "Preguntar",
             on_click=State.answer,
+            style=style.button_style,
         ),
     )
 

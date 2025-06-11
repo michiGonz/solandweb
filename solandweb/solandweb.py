@@ -9,6 +9,7 @@ from solandweb.views.jobs_carrusel.job_carrusel import job_carrusel, CarruselSta
 from solandweb.views.footer.footer import footer
 from solandweb.views.services.servicios import servicios_section  # Importa la sección de servicios
 from solandweb.views.ws.ws import whatsapp_button  # Importa el botón de WhatsApp
+from solandweb.views.chatapp.app import app
 
 
 class State(rx.State):
@@ -22,7 +23,18 @@ def index() -> rx.Component:
         about(),  # Sección "Acerca de"
         servicios_section(),
         whatsapp_button(),  # Botón de WhatsApp
-        #sidebar(),
+      rx.box(
+        rx.hstack(
+            whatsapp_button(),  # Botón de WhatsApp
+            app(),  # Botón de chat
+            spacing="9",  # Espacio entre los elementos
+        ),
+        position="fixed",
+        margin_right="32px",
+        bottom="32px",
+        right="32px",
+        
+    ),
         footer()
     )
 
